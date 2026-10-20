@@ -2997,7 +2997,7 @@ export default function AdminDashboardPage() {
                     {editingReviewId ? 'Edit Review' : 'Add New Review'}
                   </h3>
                   <form onSubmit={handleSaveReview} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-slate-300 mb-1">Author Name</label>
                         <input
@@ -3028,6 +3028,27 @@ export default function AdminDashboardPage() {
                           placeholder="Addis Commuter 01"
                           className="w-full bg-[#1e293b] border border-slate-700 rounded-xl p-2.5 text-white text-xs"
                         />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-300 mb-1">Star Rating ({rRating}/5)</label>
+                        <div className="flex items-center gap-1 mt-1 bg-[#1e293b] p-1.5 rounded-xl border border-slate-700 w-fit">
+                          {[1, 2, 3, 4, 5].map(num => (
+                            <button
+                              key={num}
+                              type="button"
+                              onClick={() => setRRating(num)}
+                              className="p-1 hover:scale-120 active:scale-95 transition cursor-pointer"
+                              aria-label={`Rate ${num} stars`}
+                            >
+                              <Star
+                                size={18}
+                                fill={rRating >= num ? '#f59e0b' : 'transparent'}
+                                color={rRating >= num ? '#f59e0b' : '#64748b'}
+                                style={{ fill: rRating >= num ? '#f59e0b' : 'transparent' }}
+                              />
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
 
