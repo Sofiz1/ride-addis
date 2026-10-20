@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e2920"/>
+      <stop offset="100%" stop-color="#0e1410"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffb703"/>
+      <stop offset="100%" stop-color="#f59f00"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Pill -->
+  <rect width="48" height="48" rx="12" fill="url(#shieldGrad)"/>
+  <rect width="46" height="46" x="1" y="1" rx="11" fill="none" stroke="#f59f00" stroke-width="1.2" stroke-opacity="0.3"/>
+  <!-- Centered Ride Addis Hexagonal Shield & Entoto Mountain Peak Crest -->
+  <g transform="translate(3, 3)">
+    <path d="M21 3 38 13v16L21 39 4 29V13L21 3Z" fill="#141c16" stroke="url(#goldGrad)" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="m11 24 6-10 3 6 4-7 7 11h-5l-3-5-3 5h-4l-2 3h-3Z" fill="url(#goldGrad)"/>
+  </g>
+</svg>
