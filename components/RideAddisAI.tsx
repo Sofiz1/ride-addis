@@ -48,14 +48,59 @@ export function RideAddisAI({
     }
   ])
   const [isTyping, setIsTyping] = useState(false)
+  const [viewportStyle, setViewportStyle] = useState<{ height?: string; bottom?: string }>({})
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const chatInputRef = useRef<HTMLInputElement>(null)
 
   // Use passed products or fallback to store's custom products
   const activeProducts = (products && products.length > 0) ? products : loadCustomProducts()
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+    messagesEndRef.current?.scrollIntoView({ behavior })
   }
+
+  // Mobile visualViewport tracking for on-screen virtual keyboard resizing
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleViewportChange = () => {
+      if (!window.visualViewport) return
+      // Only apply dynamic sizing on mobile viewports (< 768px)
+      if (window.innerWidth < 768) {
+        const vv = window.visualViewport
+        // Calculate offset if keyboard pushes viewport
+        const offsetTop = vv.offsetTop || 0
+        const height = vv.height
+        setViewportStyle({
+          height: `${height}px`,
+          bottom: `${Math.max(0, window.innerHeight - (offsetTop + height))}px`
+        })
+        scrollToBottom('auto')
+      } else {
+        setViewportStyle({})
+      }
+    }
+
+    if (isOpen) {
+      handleViewportChange()
+      window.visualViewport?.addEventListener('resize', handleViewportChange)
+      window.visualViewport?.addEventListener('scroll', handleViewportChange)
+
+      // Lock mobile body scroll while chat is open
+      const prevBodyOverflow = document.body.style.overflow
+      if (window.innerWidth < 768) {
+        document.body.style.overflow = 'hidden'
+      }
+
+      return () => {
+        window.visualViewport?.removeEventListener('resize', handleViewportChange)
+        window.visualViewport?.removeEventListener('scroll', handleViewportChange)
+        document.body.style.overflow = prevBodyOverflow
+      }
+    } else {
+      setViewportStyle({})
+    }
+  }, [isOpen])
 
   useEffect(() => {
     if (isOpen) {
@@ -184,118 +229,136 @@ export function RideAddisAI({
 
       {/* Floating Chat Modal */}
       {isOpen && (
-        <div className="ride-addis-ai-window" role="dialog" aria-label="Ride Addis AI Advisor">
-          {/* Header */}
-          <div className="ai-chat-header">
-            <div className="ai-profile">
-              <div className="ai-avatar-icon">
-                <Bot size={18} />
+        <>
+          {/* Mobile Background Dim Backdrop */}
+          <div
+            className="ai-chat-mobile-backdrop"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+
+          <div
+            className="ride-addis-ai-window"
+            role="dialog"
+            aria-label="Ride Addis AI Advisor"
+            style={viewportStyle}
+          >
+            {/* Header */}
+            <div className="ai-chat-header">
+              <div className="ai-profile">
+                <div className="ai-avatar-icon">
+                  <Bot size={18} />
+                </div>
+                <div>
+                  <strong>Ride Addis AI</strong>
+                  <p><span className="online-dot" /> Cycling & Altitude Specialist</p>
+                </div>
               </div>
-              <div>
-                <strong>Ride Addis AI</strong>
-                <p><span className="online-dot" /> Cycling & Altitude Specialist</p>
-              </div>
+              <button className="ai-close-btn" onClick={() => setIsOpen(false)} aria-label="Close chat">
+                <X size={18} />
+              </button>
             </div>
-            <button className="ai-close-btn" onClick={() => setIsOpen(false)} aria-label="Close chat">
-              <X size={18} />
-            </button>
-          </div>
 
-          {/* Quick Questions Chips - ZERO EMOJIS, NO BOLE */}
-          <div className="ai-chips-scroll">
-            <button onClick={() => handleSend('What are your bicycle prices in ETB?')}>
-              Prices in ETB
-            </button>
-            <button onClick={() => handleSend('Best bike for Entoto trails?')}>
-              Entoto Trail
-            </button>
-            <button onClick={() => handleSend('Best bike for city commute?')}>
-              City Commute
-            </button>
-            <button onClick={() => handleSend('How to pay with Telebirr or CBE Birr?')}>
-              Telebirr / CBE
-            </button>
-            <button onClick={() => handleSend('How do I track my order?')}>
-              Track Order
-            </button>
-          </div>
+            {/* Quick Questions Chips - ZERO EMOJIS, NO BOLE */}
+            <div className="ai-chips-scroll">
+              <button onClick={() => handleSend('What are your bicycle prices in ETB?')}>
+                Prices in ETB
+              </button>
+              <button onClick={() => handleSend('Best bike for Entoto trails?')}>
+                Entoto Trail
+              </button>
+              <button onClick={() => handleSend('Best bike for city commute?')}>
+                City Commute
+              </button>
+              <button onClick={() => handleSend('How to pay with Telebirr or CBE Birr?')}>
+                Telebirr / CBE
+              </button>
+              <button onClick={() => handleSend('How do I track my order?')}>
+                Track Order
+              </button>
+            </div>
 
-          {/* Messages Area */}
-          <div className="ai-messages-container">
-            {messages.map((m) => (
-              <div key={m.id} className={`ai-msg-row ${m.sender === 'user' ? 'is-user' : 'is-ai'}`}>
-                {m.sender === 'ai' && (
-                  <div className="ai-tiny-avatar">
-                    <Sparkles size={12} />
-                  </div>
-                )}
-                <div className="ai-bubble">
-                  <p>{m.text}</p>
-
-                  {/* Product Text Suggestion (Strictly NO Images) */}
-                  {m.suggestedProduct && (
-                    <div className="ai-product-suggestion text-only">
-                      <div className="product-match-text">
-                        <strong>{m.suggestedProduct.name}</strong>
-                        <span>{m.suggestedProduct.priceFormatted || 'ETB ' + m.suggestedProduct.price} · {m.suggestedProduct.category}</span>
-                      </div>
+            {/* Messages Area */}
+            <div className="ai-messages-container">
+              {messages.map((m) => (
+                <div key={m.id} className={`ai-msg-row ${m.sender === 'user' ? 'is-user' : 'is-ai'}`}>
+                  {m.sender === 'ai' && (
+                    <div className="ai-tiny-avatar">
+                      <Sparkles size={12} />
                     </div>
                   )}
+                  <div className="ai-bubble">
+                    <p>{m.text}</p>
 
-                  {/* Action Link */}
-                  {m.action && (
-                    <button
-                      className="ai-action-btn"
-                      onClick={() => {
-                        if (m.action?.type === 'view_product') {
-                          onSelectProduct(m.action.payload)
-                          setIsOpen(false)
-                        } else if (m.action?.type === 'track_order') {
-                          onOpenTrackOrder()
-                          setIsOpen(false)
-                        } else if (m.action?.type === 'open_finder') {
-                          onOpenFinder()
-                          setIsOpen(false)
-                        }
-                      }}
-                    >
-                      {m.action.label} <ArrowRight size={13} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
+                    {/* Product Text Suggestion (Strictly NO Images) */}
+                    {m.suggestedProduct && (
+                      <div className="ai-product-suggestion text-only">
+                        <div className="product-match-text">
+                          <strong>{m.suggestedProduct.name}</strong>
+                          <span>{m.suggestedProduct.priceFormatted || 'ETB ' + m.suggestedProduct.price} · {m.suggestedProduct.category}</span>
+                        </div>
+                      </div>
+                    )}
 
-            {isTyping && (
-              <div className="ai-msg-row is-ai">
-                <div className="ai-tiny-avatar"><Sparkles size={12} /></div>
-                <div className="ai-bubble typing-bubble">
-                  <span className="typing-dot" /><span className="typing-dot" /><span className="typing-dot" />
+                    {/* Action Link */}
+                    {m.action && (
+                      <button
+                        className="ai-action-btn"
+                        onClick={() => {
+                          if (m.action?.type === 'view_product') {
+                            onSelectProduct(m.action.payload)
+                            setIsOpen(false)
+                          } else if (m.action?.type === 'track_order') {
+                            onOpenTrackOrder()
+                            setIsOpen(false)
+                          } else if (m.action?.type === 'open_finder') {
+                            onOpenFinder()
+                            setIsOpen(false)
+                          }
+                        }}
+                      >
+                        {m.action.label} <ArrowRight size={13} />
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
+              ))}
+
+              {isTyping && (
+                <div className="ai-msg-row is-ai">
+                  <div className="ai-tiny-avatar"><Sparkles size={12} /></div>
+                  <div className="ai-bubble typing-bubble">
+                    <span className="typing-dot" /><span className="typing-dot" /><span className="typing-dot" />
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input Footer */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleSend()
+              }}
+              className="ai-chat-input-bar"
+            >
+              <input
+                ref={chatInputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onFocus={() => {
+                  setTimeout(() => scrollToBottom('smooth'), 220)
+                }}
+                placeholder="Ask about bikes, trails, or orders..."
+              />
+              <button type="submit" disabled={!input.trim()} className="ai-send-btn" aria-label="Send message">
+                <Send size={15} />
+              </button>
+            </form>
           </div>
-
-          {/* Input Footer */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              handleSend()
-            }}
-            className="ai-chat-input-bar"
-          >
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about bikes, trails, or orders..."
-            />
-            <button type="submit" disabled={!input.trim()} className="ai-send-btn" aria-label="Send message">
-              <Send size={15} />
-            </button>
-          </form>
-        </div>
+        </>
       )}
     </>
   )

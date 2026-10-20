@@ -7,8 +7,8 @@
     "section": "bike",
     "brand": "Ride Addis",
     "type": "Step-through / 7-speed Shimano",
-    "price": 86500,
-    "priceFormatted": "ETB 86,500",
+    "price": 83500,
+    "priceFormatted": "ETB 83,500",
     "description": "A calm, upright city bike for Addis Ababa mornings, daily commutes, and everyday urban freedom.",
     "amDescription": "ለአዲስ አበባ ማለዳዎች፣ ለዕለታዊ ጉዞዎች እና ለከተማ እንቅስቃሴ የተሰራ ምቹ ብስክሌት።",
     "images": [
@@ -21,24 +21,28 @@
     "sizes": [
       {
         "size": "Small",
+        "heightCm": "155 - 170 cm",
         "price": 83500
       },
       {
         "size": "Medium",
+        "heightCm": "168 - 182 cm",
         "price": 86500
       },
       {
         "size": "Large",
+        "heightCm": "180 - 195 cm",
         "price": 89500
       }
     ],
     "specs": {
-      "frame": "6061 Hydroformed Alloy",
-      "gears": "Shimano Nexus 7-Speed Internal",
+      "frame": "601 Hydroformed Alloy",
+      "gears": "Shimano 7-Speed",
       "brakes": "Tektro Dual Piston Mechanical",
       "weight": "12.2 kg",
-      "wheels": "700x38c Puncture Resistant",
-      "recommendedHeight": "160 - 185 cm"
+      "wheels": "700c Double-Wall Aero Rim",
+      "recommendedHeight": "160 - 185 cm",
+      "warranty": "2 Years Ride Addis Guarantee"
     }
   },
   {

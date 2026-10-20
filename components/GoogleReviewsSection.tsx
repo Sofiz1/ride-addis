@@ -287,11 +287,15 @@ export function GoogleReviewsSection({ isAm = false }: GoogleReviewsSectionProps
           </div>
         </div>
 
-        {/* Reviews Track: Smooth Horizontal Side-Scroll on Phones / 3-Col Grid on Desktop */}
+        {/* Reviews Track: Ultra-Smooth Momentum Carousel (Instagram/Facebook feel) on Phones / 3-Col Grid on Desktop */}
         <div
           ref={scrollContainerRef}
           onScroll={handleMobileScroll}
-          className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-none scroll-smooth touch-pan-x"
+          className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-none overscroll-x-contain touch-pan-x touch-pan-y"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehaviorX: 'contain'
+          }}
         >
           {filtered.map((rev, idx) => {
             const initial = rev.authorName.trim().charAt(0).toUpperCase()
@@ -300,7 +304,8 @@ export function GoogleReviewsSection({ isAm = false }: GoogleReviewsSectionProps
             return (
               <div
                 key={rev.id}
-                className="w-[85vw] sm:w-[360px] md:w-auto flex-shrink-0 snap-center bg-white/[0.07] backdrop-blur-md rounded-[2.2rem] md:rounded-[2.5rem] border border-white/10 hover:border-amber-400/40 p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 shadow-lg"
+                className="w-[85vw] sm:w-[360px] md:w-auto flex-shrink-0 bg-white/[0.07] backdrop-blur-md rounded-[2.2rem] md:rounded-[2.5rem] border border-white/10 hover:border-amber-400/40 p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 shadow-lg transform-gpu"
+                style={{ willChange: 'transform' }}
               >
                 <div>
                   {/* Monogram Alphabet Profile Header (NO PHOTO) */}

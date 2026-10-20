@@ -187,12 +187,15 @@ export default function AdminDashboardPage() {
   const pImage = pImages[0] || '/hero-bike.png'
   const [pDescription, setPDescription] = useState('')
   const [pDescriptionAm, setPDescriptionAm] = useState('')
+
+  // Engineering Specifications & Build Details
+  const [pFrame, setPFrame] = useState('6061 Hydroformed Alloy')
   const [pWeight, setPWeight] = useState('12.2 kg')
   const [pGears, setPGears] = useState('Shimano 7-Speed')
   const [pBrakes, setPBrakes] = useState('Hydraulic Disc Brakes')
-
-  // Recommended Rider Height (cm) for Adults & Kids
+  const [pWheels, setPWheels] = useState('700c Double-Wall Aero Rims')
   const [pRecommendedHeight, setPRecommendedHeight] = useState('160 - 185 cm')
+  const [pWarranty, setPWarranty] = useState('2 Years Ride Addis Guarantee')
 
   // Adult Bike Sizes & cm configuration
   const [pHasSmall, setPHasSmall] = useState(true)
@@ -206,6 +209,10 @@ export default function AdminDashboardPage() {
   const [pHasLarge, setPHasLarge] = useState(true)
   const [pPriceLarge, setPPriceLarge] = useState(78000)
   const [pAdultLargeCm, setPAdultLargeCm] = useState('180 - 195 cm')
+
+  const [pHasXLarge, setPHasXLarge] = useState(false)
+  const [pPriceXLarge, setPPriceXLarge] = useState(82000)
+  const [pAdultXLargeCm, setPAdultXLargeCm] = useState('188 - 202 cm')
 
   // Kids Bike Sizes & cm configuration
   interface KidsSizeConfig {
@@ -722,40 +729,62 @@ export default function AdminDashboardPage() {
           price: Number(pPriceLarge) || Number(pPrice)
         })
       }
+      if (pHasXLarge) {
+        configuredSizes.push({
+          size: 'XL',
+          heightCm: pAdultXLargeCm.trim() || '188 - 202 cm',
+          price: Number(pPriceXLarge) || Number(pPrice)
+        })
+      }
     }
 
     const effectiveBasePrice = configuredSizes.length > 0 ? configuredSizes[0].price : Number(pPrice)
+    const compiledSpecs = {
+      frame: pFrame.trim() || '6061 Hydroformed Alloy',
+      gears: pGears.trim() || 'Shimano 7-Speed',
+      brakes: pBrakes.trim() || 'Hydraulic Disc Brakes',
+      weight: pWeight.trim() || '12.2 kg',
+      wheels: pWheels.trim() || '700c Double-Wall Aero Rims',
+      recommendedHeight: pRecommendedHeight.trim() || (isKids ? '115 - 135 cm' : '160 - 185 cm'),
+      warranty: pWarranty.trim() || '2 Years Ride Addis Guarantee'
+    }
 
     if (editingProductId) {
-      const updated = products.map(p =>
-        p.id === editingProductId
-          ? {
-              ...p,
-              name: pName,
-              am: pNameAm || pName,
-              category: pCategory,
-              brand: pBrand,
-              price: effectiveBasePrice,
-              priceFormatted: `ETB ${effectiveBasePrice.toLocaleString()}`,
-              images: pImages.length > 0 ? pImages : ['/hero-bike.png'],
-              description: pDescription,
-              amDescription: pDescriptionAm || pDescription,
-              sizes: configuredSizes.length > 0 ? configuredSizes : undefined,
-              specs: {
-                ...p.specs,
-                weight: pWeight,
-                gears: pGears,
-                brakes: pBrakes,
-                recommendedHeight: pRecommendedHeight.trim() || (isKids ? '115 - 135 cm' : '160 - 185 cm'),
-                warranty: p.specs?.warranty || '2 Years Ride Addis Guarantee'
-              }
-            }
-          : p
-      )
+      let updatedProductObj: Product | null = null
+      const updated = products.map(p => {
+        if (p.id === editingProductId) {
+          updatedProductObj = {
+            ...p,
+            name: pName,
+            am: pNameAm || pName,
+            category: pCategory,
+            brand: pBrand,
+            price: effectiveBasePrice,
+            priceFormatted: `ETB ${effectiveBasePrice.toLocaleString()}`,
+            images: pImages.length > 0 ? pImages : ['/hero-bike.png'],
+            description: pDescription,
+            amDescription: pDescriptionAm || pDescription,
+            sizes: configuredSizes.length > 0 ? configuredSizes : undefined,
+            specs: compiledSpecs
+          }
+          return updatedProductObj
+        }
+        return p
+      })
       setProducts(updated)
       saveCustomProducts(updated)
       setEditingProductId(null)
-      showToast('Product updated successfully with photos, sizes, and cm height!')
+
+      // Persist to database API
+      if (updatedProductObj) {
+        fetch('/api/products', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedProductObj)
+        }).catch(err => console.warn('Could not sync PUT to /api/products:', err))
+      }
+
+      showToast('Product updated successfully with Engineering Specs & Sizing!')
     } else {
       const newProduct: Product = {
         id: 'custom-' + Date.now(),
@@ -772,20 +801,27 @@ export default function AdminDashboardPage() {
         images: pImages.length > 0 ? pImages : ['/hero-bike.png'],
         tone: '#252925',
         sizes: configuredSizes.length > 0 ? configuredSizes : undefined,
-        specs: {
-          weight: pWeight,
-          gears: pGears,
-          brakes: pBrakes,
-          recommendedHeight: pRecommendedHeight.trim() || (isKids ? '115 - 135 cm' : '160 - 185 cm'),
-          warranty: '2 Years Ride Addis Guarantee'
-        }
+        specs: compiledSpecs
       }
       const updated = [newProduct, ...products]
       setProducts(updated)
       saveCustomProducts(updated)
       setIsAddingProduct(false)
-      showToast('New product added with custom sizes!')
+
+      // Persist to database API
+      fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProduct)
+      }).catch(err => console.warn('Could not sync POST to /api/products:', err))
+
+      showToast('New product added with Engineering Specs & Custom Sizing!')
     }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('storage'))
+    }
+
     setPName('')
     setPNameAm('')
     setPDescription('')
@@ -796,6 +832,12 @@ export default function AdminDashboardPage() {
     const updated = products.filter(p => p.id !== id)
     setProducts(updated)
     saveCustomProducts(updated)
+    fetch(`/api/products?id=${id}`, { method: 'DELETE' }).catch(err =>
+      console.warn('Could not sync DELETE to /api/products:', err)
+    )
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('storage'))
+    }
     showToast('Product removed from catalog.')
   }
 
@@ -812,10 +854,13 @@ export default function AdminDashboardPage() {
     setPDescriptionAm(p.amDescription || '')
 
     const isKids = (p.category || '').toLowerCase().includes('kids')
+    setPFrame(p.specs?.frame || (isKids ? 'High-Tensile Steel' : '6061 Hydroformed Alloy'))
+    setPGears(p.specs?.gears || (isKids ? 'Single Speed' : 'Shimano 7-Speed'))
+    setPBrakes(p.specs?.brakes || (isKids ? 'Linear-Pull V-Brakes' : 'Hydraulic Disc Brakes'))
+    setPWeight(p.specs?.weight || (isKids ? '8.8 kg' : '12.2 kg'))
+    setPWheels(p.specs?.wheels || (isKids ? '16" Lightweight Alloy' : '700c Double-Wall Aero Rims'))
     setPRecommendedHeight(p.specs?.recommendedHeight || (isKids ? '115 - 135 cm' : '160 - 185 cm'))
-    setPWeight(p.specs?.weight || '12.2 kg')
-    setPGears(p.specs?.gears || 'Shimano 7-Speed')
-    setPBrakes(p.specs?.brakes || 'Hydraulic Disc Brakes')
+    setPWarranty(p.specs?.warranty || '2 Years Ride Addis Guarantee')
 
     if (isKids) {
       if (p.sizes && p.sizes.length > 0) {
@@ -833,6 +878,8 @@ export default function AdminDashboardPage() {
       const sOpt = p.sizes?.find(s => s.size.toLowerCase() === 'small')
       const mOpt = p.sizes?.find(s => s.size.toLowerCase() === 'medium')
       const lOpt = p.sizes?.find(s => s.size.toLowerCase() === 'large')
+      const xlOpt = p.sizes?.find(s => s.size.toLowerCase() === 'xl' || s.size.toLowerCase() === 'extra large')
+
       if (p.sizes && p.sizes.length > 0) {
         setPHasSmall(!!sOpt)
         setPPriceSmall(sOpt ? sOpt.price : Math.max(0, p.price - 3000))
@@ -845,6 +892,10 @@ export default function AdminDashboardPage() {
         setPHasLarge(!!lOpt)
         setPPriceLarge(lOpt ? lOpt.price : p.price + 3000)
         setPAdultLargeCm(lOpt?.heightCm || '180 - 195 cm')
+
+        setPHasXLarge(!!xlOpt)
+        setPPriceXLarge(xlOpt ? xlOpt.price : p.price + 6000)
+        setPAdultXLargeCm(xlOpt?.heightCm || '188 - 202 cm')
       } else {
         setPHasSmall(true)
         setPPriceSmall(Math.max(0, p.price - 3000))
@@ -855,6 +906,9 @@ export default function AdminDashboardPage() {
         setPHasLarge(true)
         setPPriceLarge(p.price + 3000)
         setPAdultLargeCm('180 - 195 cm')
+        setPHasXLarge(false)
+        setPPriceXLarge(p.price + 6000)
+        setPAdultXLargeCm('188 - 202 cm')
       }
     }
   }
@@ -1028,12 +1082,15 @@ export default function AdminDashboardPage() {
                 Administrator Email
               </label>
               <input
-                type="text"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                autoCapitalize="none"
                 required
                 value={adminEmailInput}
                 onChange={e => setAdminEmailInput(e.target.value)}
                 placeholder="admin@example.com"
-                className="w-full bg-[#1e293b] border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-400"
+                className="w-full bg-[#1e293b] border border-slate-700 rounded-xl px-4 py-3 text-white text-base sm:text-sm focus:outline-none focus:border-amber-400"
               />
             </div>
 
@@ -1043,11 +1100,12 @@ export default function AdminDashboardPage() {
               </label>
               <input
                 type="password"
+                autoComplete="current-password"
                 required
                 value={adminPasswordInput}
                 onChange={e => setAdminPasswordInput(e.target.value)}
                 placeholder="Password"
-                className="w-full bg-[#1e293b] border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-400"
+                className="w-full bg-[#1e293b] border border-slate-700 rounded-xl px-4 py-3 text-white text-base sm:text-sm focus:outline-none focus:border-amber-400"
               />
             </div>
 
@@ -1921,7 +1979,14 @@ export default function AdminDashboardPage() {
                     setPImages(['/hero-bike.png'])
                     setPDescription('')
                     setPDescriptionAm('')
-                    setPRecommendedHeight(pCategory.toLowerCase().includes('kids') ? '115 - 135 cm' : '160 - 185 cm')
+                    const isKids = pCategory.toLowerCase().includes('kids')
+                    setPRecommendedHeight(isKids ? '115 - 135 cm' : '160 - 185 cm')
+                    setPFrame(isKids ? 'High-Tensile Steel' : '6061 Hydroformed Alloy')
+                    setPGears(isKids ? 'Single Speed' : 'Shimano 7-Speed')
+                    setPBrakes(isKids ? 'Linear-Pull V-Brakes' : 'Hydraulic Disc Brakes')
+                    setPWeight(isKids ? '8.8 kg' : '12.2 kg')
+                    setPWheels(isKids ? '16" Lightweight Alloy' : '700c Double-Wall Aero Rims')
+                    setPWarranty('2 Years Ride Addis Guarantee')
                     setPHasSmall(true)
                     setPPriceSmall(72000)
                     setPAdultSmallCm('155 - 170 cm')
@@ -1931,6 +1996,9 @@ export default function AdminDashboardPage() {
                     setPHasLarge(true)
                     setPPriceLarge(78000)
                     setPAdultLargeCm('180 - 195 cm')
+                    setPHasXLarge(false)
+                    setPPriceXLarge(82000)
+                    setPAdultXLargeCm('188 - 202 cm')
                     setPKidsSizes(DEFAULT_KIDS_SIZES)
                   }}
                   className="bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-lg"
@@ -2130,38 +2198,219 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
 
-                    {/* Recommended Rider Height (cm) */}
-                    <div className="bg-[#1e293b] border border-slate-700 rounded-xl p-4 space-y-2">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                        <label className="text-xs font-bold text-amber-400 flex items-center gap-1.5 uppercase tracking-wider">
-                          <Ruler size={14} /> RECOMMENDED RIDER HEIGHT (CM)
-                        </label>
-                        <span className="text-[10px] text-slate-400">
-                          Shown on Storefront Cards, Fit Guides & Tech Specs
+                    {/* ================= ENGINEERING SPECIFICATIONS & TECHNICAL BUILD ================= */}
+                    <div className="bg-[#1e293b] border border-slate-700 rounded-xl p-4 sm:p-5 space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-2 border-b border-slate-800">
+                        <div>
+                          <label className="text-xs font-bold text-amber-400 flex items-center gap-1.5 uppercase tracking-wider">
+                            <Layers size={14} /> ENGINEERING SPECIFICATIONS & TECHNICAL BUILD
+                          </label>
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            Configures the technical specifications displayed in customer product details, comparison sheets, and AI fit guides.
+                          </p>
+                        </div>
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 self-start sm:self-auto">
+                          Storefront Sync Active
                         </span>
                       </div>
-                      <input
-                        type="text"
-                        value={pRecommendedHeight}
-                        onChange={e => setPRecommendedHeight(e.target.value)}
-                        placeholder={pCategory.toLowerCase().includes('kids') ? 'e.g. 115 - 135 cm' : 'e.g. 160 - 185 cm'}
-                        className="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-2.5 text-white text-xs font-mono"
-                      />
-                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                        <span className="text-[10px] text-slate-400 mr-1">Quick Presets:</span>
-                        {(pCategory.toLowerCase().includes('kids')
-                          ? ['76 - 96 cm', '91 - 101 cm', '101 - 122 cm', '115 - 135 cm', '122 - 152 cm']
-                          : ['155 - 175 cm', '160 - 185 cm', '168 - 188 cm', '170 - 192 cm', '175 - 200 cm']
-                        ).map(preset => (
-                          <button
-                            key={preset}
-                            type="button"
-                            onClick={() => setPRecommendedHeight(preset)}
-                            className="text-[10px] bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-amber-400 border border-slate-700 px-2 py-0.5 rounded-lg transition"
-                          >
-                            {preset}
-                          </button>
-                        ))}
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* 1. Frame */}
+                        <div className="space-y-1.5">
+                          <label className="block text-[11px] font-semibold text-slate-300">
+                            Frame Material & Geometry
+                          </label>
+                          <input
+                            type="text"
+                            value={pFrame}
+                            onChange={e => setPFrame(e.target.value)}
+                            placeholder="e.g. 6061 Hydroformed Alloy"
+                            className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-white text-xs font-mono"
+                          />
+                          <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                            <span className="text-[9px] text-slate-500 mr-0.5">Presets:</span>
+                            {['6061 Hydroformed Alloy', 'Carbon Fiber Composite', 'Chromoly Steel 4130', 'High-Tensile Steel'].map(preset => (
+                              <button
+                                key={preset}
+                                type="button"
+                                onClick={() => setPFrame(preset)}
+                                className="text-[9px] bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-amber-400 border border-slate-700/80 px-1.5 py-0.5 rounded transition"
+                              >
+                                {preset}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 2. Drivetrain & Gears */}
+                        <div className="space-y-1.5">
+                          <label className="block text-[11px] font-semibold text-slate-300">
+                            Drivetrain & Gears
+                          </label>
+                          <input
+                            type="text"
+                            value={pGears}
+                            onChange={e => setPGears(e.target.value)}
+                            placeholder="e.g. Shimano 7-Speed Tourney"
+                            className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-white text-xs font-mono"
+                          />
+                          <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                            <span className="text-[9px] text-slate-500 mr-0.5">Presets:</span>
+                            {['Shimano 7-Speed', 'Shimano Deore 10-Speed', 'Shimano Claris 8-Speed', 'Single Speed'].map(preset => (
+                              <button
+                                key={preset}
+                                type="button"
+                                onClick={() => setPGears(preset)}
+                                className="text-[9px] bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-amber-400 border border-slate-700/80 px-1.5 py-0.5 rounded transition"
+                              >
+                                {preset}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 3. Brakes */}
+                        <div className="space-y-1.5">
+                          <label className="block text-[11px] font-semibold text-slate-300">
+                            Brake System
+                          </label>
+                          <input
+                            type="text"
+                            value={pBrakes}
+                            onChange={e => setPBrakes(e.target.value)}
+                            placeholder="e.g. Hydraulic Disc Brakes"
+                            className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-white text-xs font-mono"
+                          />
+                          <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                            <span className="text-[9px] text-slate-500 mr-0.5">Presets:</span>
+                            {['Hydraulic Disc Brakes', 'Mechanical Disc Brakes', 'Linear-Pull V-Brakes', 'Dual-Pivot Caliper'].map(preset => (
+                              <button
+                                key={preset}
+                                type="button"
+                                onClick={() => setPBrakes(preset)}
+                                className="text-[9px] bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-amber-400 border border-slate-700/80 px-1.5 py-0.5 rounded transition"
+                              >
+                                {preset}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 4. Wheelset & Tires */}
+                        <div className="space-y-1.5">
+                          <label className="block text-[11px] font-semibold text-slate-300">
+                            Wheelset & Tires
+                          </label>
+                          <input
+                            type="text"
+                            value={pWheels}
+                            onChange={e => setPWheels(e.target.value)}
+                            placeholder="e.g. 700c Double-Wall Aero Rims"
+                            className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-white text-xs font-mono"
+                          />
+                          <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                            <span className="text-[9px] text-slate-500 mr-0.5">Presets:</span>
+                            {['700c Double-Wall Aero Rims', '29" Tubeless Ready Boost', '27.5" All-Terrain', '16" Lightweight Alloy'].map(preset => (
+                              <button
+                                key={preset}
+                                type="button"
+                                onClick={() => setPWheels(preset)}
+                                className="text-[9px] bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-amber-400 border border-slate-700/80 px-1.5 py-0.5 rounded transition"
+                              >
+                                {preset}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 5. Weight */}
+                        <div className="space-y-1.5">
+                          <label className="block text-[11px] font-semibold text-slate-300">
+                            Total Weight (kg)
+                          </label>
+                          <input
+                            type="text"
+                            value={pWeight}
+                            onChange={e => setPWeight(e.target.value)}
+                            placeholder="e.g. 12.2 kg"
+                            className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-white text-xs font-mono"
+                          />
+                          <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                            <span className="text-[9px] text-slate-500 mr-0.5">Presets:</span>
+                            {['8.8 kg', '10.5 kg', '11.8 kg', '12.2 kg', '13.5 kg', '14.8 kg'].map(preset => (
+                              <button
+                                key={preset}
+                                type="button"
+                                onClick={() => setPWeight(preset)}
+                                className="text-[9px] bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-amber-400 border border-slate-700/80 px-1.5 py-0.5 rounded transition"
+                              >
+                                {preset}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 6. Warranty */}
+                        <div className="space-y-1.5">
+                          <label className="block text-[11px] font-semibold text-slate-300">
+                            Warranty & Addis Guarantee
+                          </label>
+                          <input
+                            type="text"
+                            value={pWarranty}
+                            onChange={e => setPWarranty(e.target.value)}
+                            placeholder="e.g. 2 Years Ride Addis Guarantee"
+                            className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-white text-xs font-mono"
+                          />
+                          <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                            <span className="text-[9px] text-slate-500 mr-0.5">Presets:</span>
+                            {['2 Years Ride Addis Guarantee', 'Lifetime Frame / 2yr Parts', '1 Year Comprehensive', '3 Years Full Coverage'].map(preset => (
+                              <button
+                                key={preset}
+                                type="button"
+                                onClick={() => setPWarranty(preset)}
+                                className="text-[9px] bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-amber-400 border border-slate-700/80 px-1.5 py-0.5 rounded transition"
+                              >
+                                {preset}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 7. Recommended Rider Height (Full Width) */}
+                      <div className="space-y-1.5 pt-2 border-t border-slate-800">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                          <label className="text-[11px] font-semibold text-slate-300 flex items-center gap-1.5">
+                            <Ruler size={13} className="text-amber-400" /> Recommended Rider Height (cm)
+                          </label>
+                          <span className="text-[10px] text-slate-400">
+                            Shown on Product Cards, Fit Guides & Tech Sheets
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          value={pRecommendedHeight}
+                          onChange={e => setPRecommendedHeight(e.target.value)}
+                          placeholder={pCategory.toLowerCase().includes('kids') ? 'e.g. 115 - 135 cm' : 'e.g. 160 - 185 cm'}
+                          className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-white text-xs font-mono"
+                        />
+                        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                          <span className="text-[10px] text-slate-400 mr-1">Quick Presets:</span>
+                          {(pCategory.toLowerCase().includes('kids')
+                            ? ['76 - 96 cm', '91 - 101 cm', '101 - 122 cm', '115 - 135 cm', '122 - 152 cm']
+                            : ['155 - 175 cm', '160 - 185 cm', '168 - 188 cm', '170 - 192 cm', '175 - 200 cm']
+                          ).map(preset => (
+                            <button
+                              key={preset}
+                              type="button"
+                              onClick={() => setPRecommendedHeight(preset)}
+                              className="text-[10px] bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-amber-400 border border-slate-700 px-2 py-0.5 rounded-lg transition"
+                            >
+                              {preset}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
 
@@ -2260,7 +2509,7 @@ export default function AdminDashboardPage() {
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
                           {/* Small Size */}
                           <div className={`p-3 rounded-xl border transition-all ${pHasSmall ? 'bg-slate-900/90 border-amber-500/50' : 'bg-slate-900/30 border-slate-800 opacity-60'}`}>
                             <label className="flex items-center gap-2 cursor-pointer mb-2">
@@ -2268,7 +2517,7 @@ export default function AdminDashboardPage() {
                                 type="checkbox"
                                 checked={pHasSmall}
                                 onChange={(e) => setPHasSmall(e.target.checked)}
-                                className="rounded border-slate-700 text-amber-500 focus:ring-amber-500 w-4 h-4"
+                                className="rounded border-slate-700 text-amber-500 focus:ring-amber-500 w-4 h-4 cursor-pointer"
                               />
                               <span className="text-xs font-bold text-white">Small (S)</span>
                             </label>
@@ -2305,7 +2554,7 @@ export default function AdminDashboardPage() {
                                 type="checkbox"
                                 checked={pHasMedium}
                                 onChange={(e) => setPHasMedium(e.target.checked)}
-                                className="rounded border-slate-700 text-amber-500 focus:ring-amber-500 w-4 h-4"
+                                className="rounded border-slate-700 text-amber-500 focus:ring-amber-500 w-4 h-4 cursor-pointer"
                               />
                               <span className="text-xs font-bold text-white">Medium (M)</span>
                             </label>
@@ -2342,7 +2591,7 @@ export default function AdminDashboardPage() {
                                 type="checkbox"
                                 checked={pHasLarge}
                                 onChange={(e) => setPHasLarge(e.target.checked)}
-                                className="rounded border-slate-700 text-amber-500 focus:ring-amber-500 w-4 h-4"
+                                className="rounded border-slate-700 text-amber-500 focus:ring-amber-500 w-4 h-4 cursor-pointer"
                               />
                               <span className="text-xs font-bold text-white">Large (L)</span>
                             </label>
@@ -2364,6 +2613,43 @@ export default function AdminDashboardPage() {
                                     type="number"
                                     value={pPriceLarge}
                                     onChange={(e) => setPPriceLarge(Number(e.target.value))}
+                                    className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-white text-xs font-mono"
+                                    placeholder="ETB"
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Extra Large Size (XL) */}
+                          <div className={`p-3 rounded-xl border transition-all ${pHasXLarge ? 'bg-slate-900/90 border-amber-500/50' : 'bg-slate-900/30 border-slate-800 opacity-60'}`}>
+                            <label className="flex items-center gap-2 cursor-pointer mb-2">
+                              <input
+                                type="checkbox"
+                                checked={pHasXLarge}
+                                onChange={(e) => setPHasXLarge(e.target.checked)}
+                                className="rounded border-slate-700 text-amber-500 focus:ring-amber-500 w-4 h-4 cursor-pointer"
+                              />
+                              <span className="text-xs font-bold text-white">Extra Large (XL)</span>
+                            </label>
+                            {pHasXLarge && (
+                              <div className="space-y-2">
+                                <div>
+                                  <label className="text-[10px] text-slate-400 block mb-0.5">Rider Height (cm)</label>
+                                  <input
+                                    type="text"
+                                    value={pAdultXLargeCm}
+                                    onChange={(e) => setPAdultXLargeCm(e.target.value)}
+                                    placeholder="e.g. 188 - 202 cm"
+                                    className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-white text-xs font-mono"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="text-[10px] text-slate-400 block mb-0.5">Price (ETB)</label>
+                                  <input
+                                    type="number"
+                                    value={pPriceXLarge}
+                                    onChange={(e) => setPPriceXLarge(Number(e.target.value))}
                                     className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-white text-xs font-mono"
                                     placeholder="ETB"
                                   />

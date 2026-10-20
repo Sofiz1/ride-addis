@@ -845,6 +845,7 @@ export default function Page() {
         onOpenWishlist={() => setWishlistOpen(true)}
         wishlistCount={wishlist.length}
         onOpenTerms={() => setTermsOpen(true)}
+        isAm={isAm}
       />
 
       {/* 7. Bike Finder Modal (Fixed Smooth Animation) */}
