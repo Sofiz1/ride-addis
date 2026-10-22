@@ -21,23 +21,63 @@ import {
   CategoryItem,
   loadCategories
 } from '@/lib/store'
+import dynamic from 'next/dynamic'
 import { Navbar } from '@/components/Navbar'
 import { MobileMenu } from '@/components/MobileMenu'
 import { ProductCard } from '@/components/ProductCard'
 import { CloudDivider } from '@/components/CloudDivider'
-import { ProductDetailDrawer } from '@/components/ProductDetailDrawer'
-import { FavoritesDrawer } from '@/components/FavoritesDrawer'
-import { CartDrawer } from '@/components/CartDrawer'
-import { CheckoutModal } from '@/components/CheckoutModal'
-import { OrderTrackerModal } from '@/components/OrderTrackerModal'
-import { AccountModal } from '@/components/AccountModal'
-import { BikeFinderModal } from '@/components/BikeFinderModal'
-import { KidsSizingSection } from '@/components/KidsSizingSection'
 import { AnubiCyclingHero } from '@/components/AnubiCyclingHero'
-import { RideAddisAI } from '@/components/RideAddisAI'
 import { FaqSection } from '@/components/FaqSection'
-import { TermsModal } from '@/components/TermsModal'
-import { GoogleReviewsSection } from '@/components/GoogleReviewsSection'
+
+/**
+ * Performance: every drawer, modal and below-the-fold section is code-split.
+ * They only mount on interaction (or on scroll), so the initial payload for
+ * the homepage stays lean and first paint happens faster.
+ */
+const ProductDetailDrawer = dynamic(
+  () => import('@/components/ProductDetailDrawer').then((m) => m.ProductDetailDrawer),
+  { ssr: false }
+)
+const FavoritesDrawer = dynamic(
+  () => import('@/components/FavoritesDrawer').then((m) => m.FavoritesDrawer),
+  { ssr: false }
+)
+const CartDrawer = dynamic(
+  () => import('@/components/CartDrawer').then((m) => m.CartDrawer),
+  { ssr: false }
+)
+const CheckoutModal = dynamic(
+  () => import('@/components/CheckoutModal').then((m) => m.CheckoutModal),
+  { ssr: false }
+)
+const OrderTrackerModal = dynamic(
+  () => import('@/components/OrderTrackerModal').then((m) => m.OrderTrackerModal),
+  { ssr: false }
+)
+const AccountModal = dynamic(
+  () => import('@/components/AccountModal').then((m) => m.AccountModal),
+  { ssr: false }
+)
+const BikeFinderModal = dynamic(
+  () => import('@/components/BikeFinderModal').then((m) => m.BikeFinderModal),
+  { ssr: false }
+)
+const KidsSizingSection = dynamic(
+  () => import('@/components/KidsSizingSection').then((m) => m.KidsSizingSection),
+  { ssr: false }
+)
+const RideAddisAI = dynamic(
+  () => import('@/components/RideAddisAI').then((m) => m.RideAddisAI),
+  { ssr: false }
+)
+const TermsModal = dynamic(
+  () => import('@/components/TermsModal').then((m) => m.TermsModal),
+  { ssr: false }
+)
+const GoogleReviewsSection = dynamic(
+  () => import('@/components/GoogleReviewsSection').then((m) => m.GoogleReviewsSection),
+  { ssr: false }
+)
 
 export default function Page() {
   const [language, setLanguage] = useState<'EN' | 'አማ'>('EN')
@@ -739,7 +779,7 @@ export default function Page() {
               </div>
               <div className="pay-logo-badge cbe-gold-badge" title="Commercial Bank of Ethiopia (CBE 1000359050047 - Fraol Woldekidan)">
                 <img
-                  src="/cbe-logo.png"
+                  src="/cbe-logo.webp"
                   alt="Commercial Bank of Ethiopia (CBE)"
                   className="pay-logo-img cbe-gold-logo-img"
                 />

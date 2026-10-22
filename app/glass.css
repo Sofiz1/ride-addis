@@ -1,0 +1,1631 @@
+﻿/* =========================================================================
+   RIDE ADDIS â€” GLASS DESIGN SYSTEM
+   Modern boxy typography + layered glassmorphism.
+   Loaded after globals.css so it layers on top of the heritage theme
+   (paper / ink / gold) without replacing it.
+   ========================================================================= */
+
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.78);
+  --glass-tint: rgba(244, 242, 237, 0.72);
+  --glass-dark: rgba(16, 19, 16, 0.62);
+  --glass-edge: rgba(255, 255, 255, 0.6);
+  --glass-edge-soft: rgba(23, 24, 23, 0.08);
+  --glass-blur: blur(22px) saturate(170%);
+  --glass-blur-sm: blur(12px) saturate(150%);
+  --glass-shadow: 0 18px 50px -18px rgba(12, 16, 12, 0.35);
+  --glass-shadow-lg: 0 40px 110px -28px rgba(8, 12, 8, 0.6);
+  --glass-gold: rgba(185, 161, 93, 0.9);
+  --glass-radius: 20px;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'ss01' 1;
+}
+
+/* =========================================================================
+   0. HERO HEADLINE â€” CSS-ONLY ENTRANCE
+   The RIDE ADDIS wordmark used to fade in from JavaScript, which kept the
+   largest text on the page invisible until GSAP ticked. It now arrives with
+   the first paint: better LCP, no flash, no dependency on hydration.
+   ========================================================================= */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-name: charIn) {
+    .sofonias-char {
+      animation: charIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .sofonias-word-span:nth-child(1) .sofonias-char:nth-child(1) { animation-delay: 0.04s; }
+    .sofonias-word-span:nth-child(1) .sofonias-char:nth-child(2) { animation-delay: 0.1s; }
+    .sofonias-word-span:nth-child(1) .sofonias-char:nth-child(3) { animation-delay: 0.16s; }
+    .sofonias-word-span:nth-child(1) .sofonias-char:nth-child(4) { animation-delay: 0.22s; }
+    .sofonias-word-span:nth-child(2) .sofonias-char:nth-child(1) { animation-delay: 0.28s; }
+    .sofonias-word-span:nth-child(2) .sofonias-char:nth-child(2) { animation-delay: 0.34s; }
+    .sofonias-word-span:nth-child(2) .sofonias-char:nth-child(3) { animation-delay: 0.4s; }
+    .sofonias-word-span:nth-child(2) .sofonias-char:nth-child(4) { animation-delay: 0.46s; }
+    .sofonias-word-span:nth-child(2) .sofonias-char:nth-child(5) { animation-delay: 0.52s; }
+  }
+
+  @keyframes charIn {
+    from {
+      opacity: 0;
+      translate: 0 34px;
+      scale: 0.94;
+      filter: blur(10px) drop-shadow(0 4px 18px rgba(0, 0, 0, 0.95)) drop-shadow(0 14px 34px rgba(0, 0, 0, 0.85));
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+      scale: 1;
+      filter: blur(0) drop-shadow(0 4px 18px rgba(0, 0, 0, 0.95)) drop-shadow(0 14px 34px rgba(0, 0, 0, 0.85));
+    }
+  }
+}
+
+/* Display typography: boxy geometric face, tight tracking, high contrast */
+h1, h2, h3, .display-type,
+.hero-title, .section-heading, .product-title, .account-modal h2 {
+  letter-spacing: -0.02em;
+}
+
+.eyebrow {
+  letter-spacing: 0.22em;
+}
+
+/* =========================================================================
+   1. GLASS PRIMITIVES
+   ========================================================================= */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), var(--glass-shadow);
+}
+
+.glass-soft {
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid var(--glass-edge-soft);
+  -webkit-backdrop-filter: var(--glass-blur-sm);
+  backdrop-filter: var(--glass-blur-sm);
+}
+
+.glass-dark {
+  background: var(--glass-dark);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), var(--glass-shadow);
+  color: #f4f2ed;
+}
+
+.glass-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: var(--glass-blur-sm);
+  backdrop-filter: var(--glass-blur-sm);
+  color: inherit;
+}
+
+/* =========================================================================
+   2. FROSTED NAVIGATION
+   ========================================================================= */
+.sticky-header-container {
+  background: rgba(244, 242, 237, 0.74) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(23, 24, 23, 0.08);
+  box-shadow: 0 10px 40px -24px rgba(12, 16, 12, 0.5);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sticky-header-container .navbar {
+  background: transparent;
+}
+
+.sticky-header-container .topline {
+  background: rgba(17, 20, 17, 0.92);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.nav-link-btn,
+.desktop-nav-links a {
+  position: relative;
+  transition: color 0.22s ease;
+}
+
+.nav-link-btn::after,
+.desktop-nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -5px;
+  height: 1px;
+  background: var(--gold);
+  transition: right 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-link-btn:hover::after,
+.desktop-nav-links a:hover::after {
+  right: 0;
+}
+
+.account-nav-btn.is-guest-cta {
+  background: linear-gradient(135deg, #23271f 0%, #0e110e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 26px -14px rgba(10, 14, 10, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  transition: transform 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+}
+
+.account-nav-btn.is-guest-cta:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #b9a15d 0%, #8f7c3f 100%);
+  color: #14160f;
+  box-shadow: 0 16px 34px -14px rgba(185, 161, 93, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* =========================================================================
+   3. AUTH SHELL â€” TWO PANEL GLASS EXPERIENCE
+   ========================================================================= */
+.account-modal.account-modal-auth {
+  width: min(1040px, 96vw);
+  max-height: 92vh;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  border-radius: 28px !important;
+}
+
+.account-modal-auth .account-modal-header {
+  display: none !important;
+}
+
+.account-modal-auth .account-modal-body {
+  padding: 0 !important;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.ga-shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.02fr 1fr;
+  min-height: 620px;
+  border-radius: 28px;
+  overflow: hidden;
+  background: rgba(250, 248, 245, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  box-shadow: var(--glass-shadow-lg), 0 0 0 1px rgba(23, 24, 23, 0.06);
+  isolation: isolate;
+}
+
+.ga-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 6;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #f4f2ed;
+  background: rgba(16, 19, 16, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  transition: transform 0.22s ease, background 0.22s ease;
+}
+
+.ga-close:hover {
+  background: rgba(16, 19, 16, 0.72);
+  transform: rotate(90deg);
+}
+
+/* ---------- 3a. Visual panel ---------- */
+.ga-visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  color: #f4f2ed;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 70% at 12% 100%, rgba(82, 108, 88, 0.38), transparent 62%),
+    radial-gradient(90% 60% at 88% 92%, rgba(185, 161, 93, 0.22), transparent 60%),
+    #0b0e0b;
+}
+
+/* Photo band: flexes to the panel, stays at or below native scale so it never blurs */
+.ga-photo {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 232px;
+  background: url('/hero-cyclist-bg.webp') center 34% / cover no-repeat;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ga-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 11, 8, 0.42) 0%,
+    rgba(8, 11, 8, 0.08) 28%,
+    rgba(9, 12, 9, 0.34) 60%,
+    rgba(10, 13, 10, 0.82) 86%,
+    #0b0e0b 100%
+  );
+}
+
+.ga-visual-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px 32px 26px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Slow aurora light for depth (GPU-cheap, transform/opacity only) */
+.ga-visual::before,
+.ga-visual::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(38px);
+  will-change: transform;
+}
+
+.ga-visual::before {
+  width: 320px;
+  height: 320px;
+  top: -90px;
+  right: -70px;
+  background: radial-gradient(circle, rgba(185, 161, 93, 0.5), transparent 68%);
+  animation: gaAurora 16s ease-in-out infinite alternate;
+}
+
+.ga-visual::after {
+  width: 300px;
+  height: 300px;
+  bottom: -120px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(82, 108, 88, 0.55), transparent 68%);
+  animation: gaAurora 20s ease-in-out 1s infinite alternate-reverse;
+}
+
+@keyframes gaAurora {
+  from { transform: translate3d(0, 0, 0) scale(1); opacity: 0.85; }
+  to { transform: translate3d(18px, 26px, 0) scale(1.12); opacity: 1; }
+}
+
+.ga-visual > *:not(.ga-photo):not(.ga-brand-row) {
+  position: relative;
+  z-index: 2;
+}
+
+.ga-brand-row {
+  position: absolute;
+  top: 24px;
+  left: 32px;
+  right: 32px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ga-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
+}
+
+.ga-brand em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.ga-secure-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f3ecd9;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.ga-visual-copy {
+  max-width: 30ch;
+}
+
+.ga-kicker {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #e6d6a8;
+  margin-bottom: 12px;
+}
+
+.ga-title {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(30px, 3.4vw, 42px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+
+.ga-title span {
+  display: block;
+  background: linear-gradient(100deg, #f7f4e9 10%, #d9c68e 55%, #b9a15d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ga-lede {
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: rgba(244, 242, 237, 0.78);
+  margin: 0;
+}
+
+.ga-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.ga-proof {
+  padding: 12px 12px 11px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.ga-proof strong {
+  display: block;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #fbf8ef;
+  line-height: 1;
+}
+
+.ga-proof small {
+  display: block;
+  margin-top: 6px;
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(244, 242, 237, 0.62);
+}
+
+.ga-trust-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(244, 242, 237, 0.6);
+}
+
+.ga-trust-strip i {
+  font-style: normal;
+  color: var(--gold);
+}
+
+/* ---------- 3b. Form panel ---------- */
+.ga-form-panel {
+  position: relative;
+  padding: 52px 34px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  background:
+    linear-gradient(148deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 42%),
+    radial-gradient(120% 80% at 100% 0%, rgba(185, 161, 93, 0.16), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(250, 247, 240, 0.9) 100%);
+}
+
+.ga-form-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(23, 24, 23, 0.1) 20%, rgba(23, 24, 23, 0.1) 80%, transparent);
+}
+
+.ga-form-head {
+  margin-bottom: 2px;
+}
+
+.ga-form-head .ga-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+
+.ga-form-head h2 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(23px, 2.4vw, 29px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+  color: #14170f;
+  margin: 0 0 7px;
+}
+
+.ga-form-head p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #6b6a62;
+  margin: 0;
+}
+
+/* Segmented switcher, glass edition */
+.ga-form-panel .auth-segmented-switcher {
+  background: rgba(23, 24, 23, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+  padding: 4px;
+  margin-bottom: 4px;
+  box-shadow: inset 0 1px 3px rgba(23, 24, 23, 0.06);
+}
+
+.ga-form-panel .auth-segment-btn {
+  border-radius: 11px;
+  min-height: 40px;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+}
+
+.ga-form-panel .auth-segment-btn.active {
+  background: linear-gradient(135deg, #23271f 0%, #0d100d 100%);
+  box-shadow: 0 8px 20px -10px rgba(10, 14, 10, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+/* Glass inputs */
+.ga-form-panel .auth-input,
+.ga-form-panel .auth-select {
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(23, 24, 23, 0.1);
+  box-shadow: inset 0 1px 0 #ffffff, 0 1px 2px rgba(23, 24, 23, 0.04);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.ga-form-panel .auth-input:hover,
+.ga-form-panel .auth-select:hover {
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.ga-form-panel .auth-input:focus,
+.ga-form-panel .auth-select:focus {
+  background: #ffffff;
+  border-color: rgba(185, 161, 93, 0.85);
+  box-shadow: 0 0 0 4px rgba(185, 161, 93, 0.18), inset 0 1px 0 #ffffff;
+}
+
+.ga-form-panel .auth-field-label {
+  font-size: 9.5px;
+  letter-spacing: 0.13em;
+  color: #4c5148;
+}
+
+.ga-form-panel .auth-pw-strength-box {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(23, 24, 23, 0.08);
+  border-radius: 14px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.ga-form-panel .auth-error-alert {
+  border-radius: 13px;
+  background: rgba(254, 242, 242, 0.85);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  margin-bottom: 4px;
+}
+
+/* Premium submit button */
+.ga-form-panel .auth-submit-btn {
+  position: relative;
+  min-height: 54px;
+  border-radius: 15px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, #262b23 0%, #0d100d 100%);
+  color: #f7f4ea;
+  box-shadow: 0 18px 36px -18px rgba(10, 14, 10, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.3s ease;
+}
+
+.ga-form-panel .auth-submit-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.22) 48%, transparent 72%);
+  transform: translateX(-120%);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ga-form-panel .auth-submit-btn:hover::after {
+  transform: translateX(120%);
+}
+
+.ga-form-panel .auth-submit-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #33382d 0%, #12160f 100%);
+  box-shadow: 0 24px 44px -18px rgba(10, 14, 10, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.ga-form-panel .auth-submit-btn:hover svg {
+  transform: translateX(3px);
+  transition: transform 0.24s ease;
+}
+
+.ga-form-panel .auth-submit-btn:active {
+  transform: translateY(0) scale(0.995);
+}
+
+.ga-form-panel .auth-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Footer links */
+.ga-form-panel .auth-footer-actions {
+  margin-top: 4px;
+  gap: 6px;
+}
+
+.ga-form-panel .auth-switch-mode-btn {
+  border-radius: 12px;
+  font-size: 12px;
+  text-decoration: none;
+  color: #2f4a33;
+  background: rgba(82, 108, 88, 0.08);
+  border: 1px solid rgba(82, 108, 88, 0.16);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.ga-form-panel .auth-switch-mode-btn:hover {
+  background: rgba(82, 108, 88, 0.16);
+  color: #14170f;
+  transform: translateY(-1px);
+}
+
+.ga-form-panel .auth-terms-note {
+  font-size: 10.5px;
+  color: #86867c;
+}
+
+.ga-form-panel .auth-terms-link {
+  color: #3f6147;
+}
+
+.ga-secure-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(23, 24, 23, 0.08);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #908f85;
+}
+
+.ga-secure-foot span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ga-secure-foot i.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(23, 24, 23, 0.28);
+}
+
+/* Subtle field stagger entrance (cheap: transform + opacity only) */
+@media (prefers-reduced-motion: no-preference) {
+  .ga-form-panel > .crud-form {
+    animation: gaRise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes gaRise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* =========================================================================
+   4. RESPONSIVE
+   ========================================================================= */
+@media (max-width: 900px) {
+  .ga-shell {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .ga-visual {
+    padding: 0;
+    gap: 0;
+    min-height: 0;
+  }
+
+  .ga-photo {
+    flex: 0 0 168px;
+    min-height: 168px;
+    background-position: center 30%;
+  }
+
+  .ga-visual-body {
+    padding: 14px 20px 18px;
+    gap: 10px;
+  }
+
+  .ga-visual-copy {
+    max-width: none;
+  }
+
+  .ga-title {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+
+  .ga-lede,
+  .ga-proof-grid,
+  .ga-trust-strip,
+  .ga-secure-pill {
+    display: none;
+  }
+
+  .ga-brand-row {
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    right: 60px;
+  }
+
+  .ga-close {
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .ga-form-panel {
+    padding: 56px 20px 26px;
+    gap: 12px;
+  }
+
+  .ga-form-panel::before {
+    display: none;
+  }
+
+  .account-modal.account-modal-auth {
+    width: min(560px, 96vw);
+    border-radius: 24px !important;
+  }
+
+  .ga-shell {
+    border-radius: 24px;
+  }
+
+  .ga-form-panel .auth-input,
+  .ga-form-panel .auth-select {
+    height: 50px;
+  }
+}
+
+@media (max-width: 420px) {
+  .ga-form-panel {
+    padding: 18px 16px 22px;
+  }
+
+  .ga-form-panel .auth-submit-btn {
+    min-height: 50px;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ga-visual::before,
+  .ga-visual::after {
+    animation: none;
+  }
+
+  .ga-form-panel .auth-submit-btn::after {
+    display: none;
+  }
+}
+
+/* =========================================================================
+   5. STOREFRONT SURFACES
+   The same glass language, applied across the rest of the site: product
+   cards, drawers, checkout, tracker, FAQ, footer, navigation sheet and the
+   sizing pages.
+   ========================================================================= */
+
+/* ---------- 5a. Product cards ---------- */
+.product-card {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 2px 4px rgba(23, 24, 23, 0.04), 0 24px 54px -36px rgba(23, 24, 23, 0.55);
+}
+
+.product-card::before {
+  border-radius: 20px;
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.product-card:hover::before {
+  border-color: rgba(185, 161, 93, 0.55);
+}
+
+.product-image-gallery-box {
+  border-radius: 20px 20px 0 0;
+}
+
+.product-card-title {
+  font-weight: 500;
+}
+
+.card-price-amount,
+.card-price-currency,
+.pinned-val,
+.price-amount {
+  font-feature-settings: 'tnum' 1;
+  letter-spacing: -0.03em;
+}
+
+.quick-add-btn {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+}
+
+.quick-add-btn:hover {
+  background: #ffffff;
+}
+
+/* ---------- 5b. Drawers (cart, wishlist, product) ---------- */
+.drawer {
+  background: rgba(250, 248, 245, 0.88);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+  backdrop-filter: blur(26px) saturate(160%);
+  border-left: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: -50px 0 110px -50px rgba(8, 12, 8, 0.65);
+}
+
+.drawer-header {
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(23, 24, 23, 0.08);
+}
+
+.drawer-close {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.cart-item-row,
+.wishlist-item-card {
+  padding: 12px;
+  margin-bottom: 10px;
+  border-bottom: 0;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(23, 24, 23, 0.06);
+  box-shadow: inset 0 1px 0 #ffffff;
+}
+
+.cart-item-thumb,
+.wishlist-item-thumb {
+  border-radius: 12px;
+}
+
+.quantity-controller {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(23, 24, 23, 0.1);
+}
+
+.delivery-meter-box {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(23, 24, 23, 0.06);
+  border-radius: 16px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.cart-footer {
+  border-top: 1px solid rgba(23, 24, 23, 0.1);
+}
+
+.empty-icon-circle {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(23, 24, 23, 0.07);
+  border-radius: 999px;
+}
+
+.checkout-cta,
+.drawer-bottom-actions .button-dark {
+  border-radius: 14px;
+  background: linear-gradient(135deg, #262b23 0%, #0d100d 100%);
+  box-shadow: 0 18px 36px -18px rgba(10, 14, 10, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.product-drawer-pinned-footer {
+  background: rgba(250, 248, 245, 0.9);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border-top: 1px solid rgba(23, 24, 23, 0.08);
+}
+
+.drawer-main-photo-box,
+.drawer-gallery {
+  border-radius: 18px;
+}
+
+.drawer-price-card,
+.specs-table-box {
+  border-radius: 16px;
+}
+
+.size-pill {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(23, 24, 23, 0.1);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.size-pill:hover {
+  background: #ffffff;
+  border-color: rgba(185, 161, 93, 0.6);
+  transform: translateY(-1px);
+}
+
+/* ---------- 5c. Checkout + order tracker ---------- */
+.modal-shell.checkout-modal,
+.tracker-modal {
+  background: rgba(250, 248, 245, 0.93);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+  backdrop-filter: blur(26px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  box-shadow: var(--glass-shadow-lg);
+}
+
+.modal-close-btn {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.checkout-section-box {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(23, 24, 23, 0.07);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 #ffffff, 0 14px 34px -26px rgba(23, 24, 23, 0.55);
+}
+
+.checkout-text-input,
+.checkout-select-input,
+.ref-text-input {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(23, 24, 23, 0.1);
+}
+
+.checkout-text-input:focus,
+.checkout-select-input:focus,
+.ref-text-input:focus {
+  background: #ffffff;
+  border-color: rgba(185, 161, 93, 0.8);
+  box-shadow: 0 0 0 4px rgba(185, 161, 93, 0.16);
+}
+
+.payment-pill:hover {
+  border-color: rgba(185, 161, 93, 0.55);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* ---------- 5d. FAQ ---------- */
+.faq-card {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(23, 24, 23, 0.07);
+  border-radius: 18px;
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(150%);
+  box-shadow: inset 0 1px 0 #ffffff, 0 14px 34px -30px rgba(23, 24, 23, 0.6);
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.faq-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(185, 161, 93, 0.45);
+}
+
+.faq-card.is-open {
+  border-color: rgba(82, 108, 88, 0.5);
+  box-shadow: inset 0 1px 0 #ffffff, 0 22px 48px -30px rgba(23, 24, 23, 0.55);
+}
+
+.faq-question-btn {
+  padding: 20px 22px;
+}
+
+.faq-answer-pane {
+  border-top: 1px solid rgba(23, 24, 23, 0.07);
+}
+
+/* ---------- 5e. Story + footer ---------- */
+.story {
+  background:
+    radial-gradient(120% 100% at 88% 6%, rgba(185, 161, 93, 0.16), transparent 58%),
+    radial-gradient(100% 100% at 0% 100%, rgba(0, 0, 0, 0.28), transparent 62%),
+    var(--green);
+}
+
+footer.site-footer,
+.site-footer {
+  background: linear-gradient(180deg, #161b16 0%, #0b0e0b 100%) !important;
+}
+
+footer.site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(185, 161, 93, 0.6), transparent);
+}
+
+.footer-links-col h4,
+.footer-payments-col h4 {
+  letter-spacing: 0.18em;
+}
+
+.footer-links-col a,
+.footer-links-col button {
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-links-col a:hover,
+.footer-links-col button:hover {
+  transform: translateX(2px);
+}
+
+.social-icon-btn {
+  border-radius: 12px;
+  transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease;
+}
+
+.social-icon-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ---------- 5f. Mobile navigation sheet ---------- */
+.mobile-menu-drawer {
+  background: rgba(250, 248, 245, 0.93);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 40px 0 90px -40px rgba(8, 12, 8, 0.6);
+}
+
+.accordion-trigger {
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.accordion-trigger:hover {
+  background: rgba(23, 24, 23, 0.04);
+}
+
+.mobile-account-btn {
+  border-radius: 14px;
+}
+
+/* ---------- 5g. Sizing pages ---------- */
+.standalone-sizing-page {
+  background: radial-gradient(120% 60% at 50% -10%, #fbf9f4 0%, #f4f2ed 58%);
+}
+
+.standalone-header {
+  background: rgba(255, 255, 255, 0.72) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 1px solid rgba(23, 24, 23, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.cyclesouq-fit-result-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(24, 30, 24, 0.07);
+  border-radius: 22px;
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: inset 0 1px 0 #ffffff, 0 26px 60px -40px rgba(23, 24, 23, 0.6);
+}
+
+.fit-metric-box {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(23, 24, 23, 0.06);
+  border-radius: 14px;
+}
+
+.fit-product-preview-row {
+  border-radius: 18px;
+  background: rgba(244, 242, 237, 0.7);
+}
+
+.pill-height-range {
+  border-radius: 999px;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.pill-height-range:hover {
+  transform: translateY(-1px);
+}
+
+/* ---------- 5h. Global button polish ---------- */
+.button {
+  border-radius: 12px;
+}
+
+.button-dark {
+  background: linear-gradient(135deg, #262b23 0%, #0d100d 100%);
+}
+
+.button-dark:hover {
+  background: linear-gradient(135deg, #33382d 0%, #12160f 100%);
+}
+
+.button-outline {
+  border-radius: 12px;
+}
+
+.text-link {
+  transition: color 0.2s ease, gap 0.2s ease;
+}
+
+@media (max-width: 900px) {
+  .cart-item-row,
+  .wishlist-item-card {
+    padding: 10px;
+    border-radius: 14px;
+  }
+
+  .checkout-section-box {
+    border-radius: 16px;
+  }
+
+  .faq-card {
+    border-radius: 16px;
+  }
+}
+
+/* Checkout order summary â€” match the glass section cards */
+.order-summary-box {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(23, 24, 23, 0.07);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 #ffffff, 0 14px 34px -26px rgba(23, 24, 23, 0.55);
+}
+
+.order-summary-box h3 {
+  border-bottom: 1px solid rgba(23, 24, 23, 0.08);
+  padding-bottom: 12px;
+}
+
+/* =========================================================================
+   6. DEEP MODERNISATION PASS
+   Consistent framing, type rhythm, glass controls and motion polish across
+   every page of the main storefront.
+   ========================================================================= */
+
+/* ---------- 6a. Auth photo framing (same crop on login + create account) ---------- */
+@media (min-width: 901px) {
+  .ga-photo {
+    flex: 0 0 auto;
+    height: 300px;
+    min-height: 300px;
+  }
+}
+
+.ga-visual-body {
+  flex: 1 1 auto;
+  justify-content: flex-start;
+}
+
+.ga-visual-body .ga-trust-strip {
+  margin-top: auto;
+}
+
+/* ---------- 6b. Global rhythm, focus and selection ---------- */
+html {
+  scroll-padding-top: 110px;
+}
+
+section[id],
+div[id="top"] {
+  scroll-margin-top: 110px;
+}
+
+::selection {
+  background: rgba(185, 161, 93, 0.35);
+  color: #14170f;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(185, 161, 93, 0.85);
+  outline-offset: 2px;
+}
+
+/* ---------- 6c. Navigation refinement ---------- */
+.navbar {
+  height: 78px;
+}
+
+.desktop-nav-links {
+  gap: 26px;
+}
+
+.nav-actions {
+  gap: 6px;
+}
+
+.icon-button {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  transition: background 0.22s ease, color 0.22s ease, transform 0.22s ease;
+}
+
+.icon-button:hover {
+  background: rgba(23, 24, 23, 0.06);
+}
+
+.icon-button:active {
+  transform: scale(0.94);
+}
+
+.lang-toggle {
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(23, 24, 23, 0.12);
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.lang-toggle:hover {
+  background: #ffffff;
+  border-color: rgba(185, 161, 93, 0.5);
+}
+
+.brand-mark strong {
+  letter-spacing: 0.16em;
+}
+
+/* ---------- 6d. Collection / catalog toolbar ---------- */
+.collection {
+  background:
+    radial-gradient(120% 80% at 50% -25%, #ffffff 0%, rgba(247, 245, 240, 0.85) 45%, var(--paper) 100%);
+}
+
+.section-heading {
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.section-heading h2 {
+  letter-spacing: -0.045em;
+}
+
+.section-heading .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--green);
+}
+
+.section-heading .eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 4px rgba(185, 161, 93, 0.18);
+}
+
+.section-heading-actions .text-link {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(23, 24, 23, 0.12);
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.section-heading-actions .text-link:hover {
+  background: #ffffff;
+  border-color: rgba(185, 161, 93, 0.55);
+  transform: translateY(-1px);
+}
+
+.catalog-controls-container {
+  padding: 14px 16px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: inset 0 1px 0 #ffffff, 0 20px 44px -38px rgba(23, 24, 23, 0.55);
+}
+
+.catalog-top-controls {
+  gap: 12px;
+}
+
+.category-tabs {
+  gap: 6px;
+}
+
+.category-tabs button {
+  padding: 9px 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(23, 24, 23, 0.08);
+  background: rgba(255, 255, 255, 0.6);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.category-tabs button:hover {
+  background: #ffffff;
+  border-color: rgba(185, 161, 93, 0.5);
+  transform: translateY(-1px);
+}
+
+.category-tabs button.active {
+  background: linear-gradient(135deg, #23271f 0%, #0d100d 100%);
+  border-color: #0d100d;
+  color: #f7f4ea;
+  box-shadow: 0 12px 24px -14px rgba(10, 14, 10, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.brand-select {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(23, 24, 23, 0.08);
+}
+
+.brand-select select {
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.catalog-search-input {
+  height: 38px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(23, 24, 23, 0.08);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.catalog-search-input:focus-within {
+  background: #ffffff;
+  border-color: rgba(185, 161, 93, 0.7);
+  box-shadow: 0 0 0 4px rgba(185, 161, 93, 0.14);
+}
+
+.catalog-search-input input {
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.product-grid {
+  gap: 26px;
+}
+
+/* ---------- 6e. Story ---------- */
+.story {
+  padding: 110px 9vw 140px;
+}
+
+.story .eyebrow {
+  color: #dcc98f;
+  letter-spacing: 0.24em;
+}
+
+.story h2 {
+  letter-spacing: -0.045em;
+}
+
+.story-stat {
+  border-left: 0;
+  padding: 38px 40px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.story-stat p {
+  margin-left: 0;
+}
+
+/* ---------- 6f. FAQ + reviews surface ---------- */
+.faq-section {
+  background: linear-gradient(180deg, #f1eee7 0%, #eae7de 100%);
+}
+
+/* ---------- 6g. Footer ---------- */
+footer.site-footer {
+  padding: 90px 8vw 44px !important;
+}
+
+.footer-grid {
+  gap: 44px !important;
+}
+
+.footer-brand-bio {
+  font-size: 12.5px;
+  line-height: 1.7;
+  max-width: 36ch;
+  color: #b3b7af;
+}
+
+.footer-links-col a,
+.footer-links-col button {
+  font-size: 12px;
+}
+
+.pay-logo-badge {
+  border-radius: 12px;
+}
+
+/* ---------- 6h. Sizing pages ---------- */
+.standalone-sizing-main {
+  padding: 48px 5vw 90px;
+}
+
+.cyclesouq-fit-title {
+  letter-spacing: -0.04em;
+}
+
+.cyclesouq-fit-header .eyebrow {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(23, 24, 23, 0.08);
+}
+
+/* ---------- 6i. Small screens ---------- */
+@media (max-width: 900px) {
+  html {
+    scroll-padding-top: 92px;
+  }
+
+  .navbar {
+    height: 68px;
+  }
+
+  .catalog-controls-container {
+    padding: 10px 12px;
+    border-radius: 18px;
+  }
+
+  .story {
+    padding: 80px 7vw 100px;
+  }
+
+  .story-stat {
+    padding: 28px;
+    border-radius: 20px;
+  }
+
+  footer.site-footer {
+    padding: 60px 20px 32px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  * {
+    scroll-behavior: auto !important;
+  }
+
+  .product-card,
+  .faq-card,
+  .category-tabs button,
+  .quick-add-btn,
+  .auth-submit-btn,
+  .button {
+    transition: none !important;
+  }
+}
+
+/* ---------- 6j. Create-account form: two columns on desktop ---------- */
+@media (min-width: 901px) {
+  .ga-form-panel .auth-form-register {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 14px;
+    align-items: start;
+  }
+
+  .ga-form-panel .auth-form-register > * {
+    min-width: 0;
+  }
+
+  .ga-form-panel .auth-form-register .auth-span-2 {
+    grid-column: 1 / -1;
+  }
+
+  .ga-form-panel .auth-form-register .auth-input,
+  .ga-form-panel .auth-form-register .auth-select {
+    height: 48px;
+  }
+}
+
+/* ---------- 6k. Compact auth hints ---------- */
+.auth-hint {
+  font-size: 10px;
+  font-weight: 400;
+  color: #6b6a62;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.auth-quick-prefix {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+@media (min-width: 901px) {
+  .auth-form-register .auth-hint {
+    display: none;
+  }
+}
+
+/* Keep mobile-only controls hidden on desktop (overrides the icon-button display rule) */
+@media (min-width: 901px) {
+  .icon-button.mobile-only,
+  .navbar .mobile-only {
+    display: none !important;
+  }
+}
+
+/* ---------- 6l. Footer consistency ---------- */
+.footer-btn-link {
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.footer-location-tag {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.social-icon-btn {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  width: 38px;
+  height: 38px;
+}
+
+.social-icon-btn:hover {
+  background: rgba(185, 161, 93, 0.9);
+  border-color: rgba(185, 161, 93, 0.9);
+  color: #14170f;
+}
+
+.pay-logo-badge {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

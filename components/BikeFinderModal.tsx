@@ -160,7 +160,7 @@ export function BikeFinderModal({
                     src={recommendedProduct.images[0]}
                     alt={recommendedProduct.name}
                     onError={(e) => {
-                      ;(e.target as HTMLImageElement).src = '/hero-bike.png'
+                      ;(e.target as HTMLImageElement).src = '/hero-bike.webp'
                     }}
                   />
                 </div>

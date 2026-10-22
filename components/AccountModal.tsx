@@ -332,7 +332,7 @@ export function AccountModal({
       aria-label={user ? 'Account Management' : isRegistering ? 'Create Ride Addis Account' : 'Sign In to Ride Addis'}
     >
       <div
-        className="modal-shell account-modal"
+        className={`modal-shell account-modal ${!user ? 'account-modal-auth' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Mobile Pull / Drag Indicator for Bottom Sheet Feel */}
@@ -360,7 +360,73 @@ export function AccountModal({
         <div className="account-modal-body">
           {!user ? (
             // ================= 1. AUTHENTICATION VIEW (SIGN IN / CREATE ACCOUNT) =================
-            <div className="auth-container">
+            <div className="ga-shell">
+              {/* Floating glass close button */}
+              <button
+                type="button"
+                className="ga-close"
+                onClick={onClose}
+                aria-label={isAm ? 'ዝጋ' : 'Close'}
+              >
+                <X size={16} />
+              </button>
+
+              {/* ---------- Visual brand panel ---------- */}
+              <section className="ga-visual" aria-hidden="true">
+                <div className="ga-photo" />
+                <div className="ga-brand-row">
+                  <span className="ga-brand">
+                    RIDE <em>ADDIS</em>
+                  </span>
+                  <span className="ga-secure-pill">
+                    <ShieldCheck size={11} />
+                    {isAm ? 'የተጠበቀ' : 'Secure access'}
+                  </span>
+                </div>
+
+                <div className="ga-visual-body">
+                  <div className="ga-visual-copy">
+                    <span className="ga-kicker">
+                      {isAm ? 'አዲስ አበባ · ፕሪሚየም ሳይክሊንግ' : 'ADDIS ABABA · PREMIUM CYCLING'}
+                    </span>
+                    <h3 className="ga-title">
+                      {isAm ? 'ከፍተኛውን ከተማ' : 'Ride the'}
+                      <span>{isAm ? 'ይጋልቡ' : 'high city.'}</span>
+                    </h3>
+                    <p className="ga-lede">
+                      {isAm
+                        ? 'ጥራት ያላቸው ብስክሌቶች፣ በአዲስ አበባ ወርክሾፓችን ተገጣጥመው ወደ ቤትዎ ይደርሳሉ — ለሁሉም ፍሬም የዕድሜ ልክ አገልግሎት።'
+                        : 'Premium bicycles, assembled in our Addis workshop and delivered to your door — with lifetime service on every frame.'}
+                    </p>
+                  </div>
+
+                  <div className="ga-proof-grid">
+                    <div className="ga-proof">
+                      <strong>5.0★</strong>
+                      <small>{isAm ? 'የGoogle ደረጃ' : 'Google rating'}</small>
+                    </div>
+                    <div className="ga-proof">
+                      <strong>{isAm ? 'ነጻ' : 'Free'}</strong>
+                      <small>{isAm ? 'የአዲስ አበባ ማድረስ' : 'Addis delivery'}</small>
+                    </div>
+                    <div className="ga-proof">
+                      <strong>100%</strong>
+                      <small>{isAm ? 'ተገጣጥሞ ተጣርቷል' : 'Assembled & tuned'}</small>
+                    </div>
+                  </div>
+
+                  <div className="ga-trust-strip">
+                    <span>{isAm ? 'የዕድሜ ልክ አገልግሎት' : 'Lifetime service'}</span>
+                    <i>·</i>
+                    <span>{isAm ? 'የባንክ ደረጃ ምስጢር' : 'Bank-grade encryption'}</span>
+                    <i>·</i>
+                    <span>TeleBirr · CBE</span>
+                  </div>
+                </div>
+              </section>
+
+              {/* ---------- Form panel ---------- */}
+              <section className="ga-form-panel">
               {/* Touch-Friendly Segmented Tab Switcher */}
               <div className="auth-segmented-switcher" role="tablist">
                 <button
@@ -392,7 +458,7 @@ export function AccountModal({
               </div>
 
               {/* Dynamic Header Typography */}
-              <div className="auth-header">
+              <div className="ga-form-head auth-header">
                 <span className="eyebrow">{isAm ? 'የአዲስ አበባ ብስክሌት ማህበረሰብ' : 'RIDE ADDIS CYCLIST PASS'}</span>
                 <h2>{isRegistering ? (isAm ? 'የራስዎን መለያ ይፍጠሩ' : 'Create Your Account') : (isAm ? 'እንኳን ደህና መጡ' : 'Sign In to Your Account')}</h2>
                 <p>
@@ -413,7 +479,7 @@ export function AccountModal({
               {/* Forms */}
               {isRegistering ? (
                 // --- CREATE ACCOUNT FORM ---
-                <form onSubmit={handleRegister} className="crud-form auth-form">
+                <form onSubmit={handleRegister} className="crud-form auth-form auth-form-register">
                   <label className="auth-field-label">
                     <span>{isAm ? 'ሙሉ ስም' : 'Full Name'}</span>
                     <div className="auth-input-wrapper">
@@ -445,7 +511,7 @@ export function AccountModal({
                         required
                         value={emailInput}
                         onChange={(e) => setEmailInput(e.target.value)}
-                        placeholder="cyclist@example.com"
+                        placeholder="you@example.com"
                         className="auth-input has-left-icon"
                       />
                     </div>
@@ -454,7 +520,7 @@ export function AccountModal({
                   <label className="auth-field-label">
                     <div className="flex items-center justify-between">
                       <span>{isAm ? 'ስልክ ቁጥር' : 'Phone Number'}</span>
-                      <span className="text-[10px] text-stone-600 font-normal">Ethiopian Mobile</span>
+                      <span className="auth-hint">Ethiopian Mobile</span>
                     </div>
                     <div className="auth-input-wrapper">
                       <Phone size={16} className="auth-input-icon" />
@@ -465,12 +531,12 @@ export function AccountModal({
                         required
                         value={phoneInput}
                         onChange={(e) => setPhoneInput(e.target.value)}
-                        placeholder="091 123 4567 or +251 91 123 4567"
+                        placeholder="091 123 4567"
                         className="auth-input has-left-icon"
                       />
                     </div>
                     {/* Quick Ethiopian Mobile Helper Chips */}
-                    <div className="flex items-center gap-1.5 pt-1 flex-wrap">
+                    <div className="auth-quick-prefix">
                       <span className="text-[10px] text-stone-600">Quick prefix:</span>
                       <button
                         type="button"
@@ -516,7 +582,7 @@ export function AccountModal({
                     </div>
                   </label>
 
-                  <label className="auth-field-label">
+                  <label className="auth-field-label auth-span-2">
                     <span>{isAm ? 'የይለፍ ቃል ፍጠር' : 'Create Security Password'}</span>
                     <div className="auth-input-wrapper">
                       <Lock size={16} className="auth-input-icon" />
@@ -542,7 +608,7 @@ export function AccountModal({
 
                   {/* Real-time Password Strength Meter */}
                   {passwordInput.length > 0 && (
-                    <div className="auth-pw-strength-box">
+                    <div className="auth-pw-strength-box auth-span-2">
                       <div className="flex items-center justify-between text-[11px] font-bold">
                         <span className="text-stone-600">{isAm ? 'የይለፍ ቃል ጥንካሬ:' : 'Password Strength:'}</span>
                         <span
@@ -631,7 +697,7 @@ export function AccountModal({
                   <button
                     type="submit"
                     disabled={isSubmittingAuth}
-                    className="button button-dark full-width auth-submit-btn"
+                    className="button button-dark full-width auth-submit-btn auth-span-2"
                   >
                     {isSubmittingAuth ? (
                       <>
@@ -663,7 +729,7 @@ export function AccountModal({
                         required
                         value={emailInput}
                         onChange={(e) => setEmailInput(e.target.value)}
-                        placeholder="cyclist@example.com"
+                        placeholder="you@example.com"
                         className="auth-input has-left-icon"
                       />
                     </div>
@@ -741,6 +807,15 @@ export function AccountModal({
                   {isAm ? ' ተስማምተዋል።' : '.'}
                 </p>
               </div>
+              <div className="ga-secure-foot">
+                <span>
+                  <ShieldCheck size={12} />
+                  {isAm ? '256-bit ምስጠራ' : '256-bit encryption'}
+                </span>
+                <i className="dot" />
+                <span>{isAm ? 'ቴሌብር · CBE · ጥሬ ገንዘብ' : 'TeleBirr · CBE · Cash on delivery'}</span>
+              </div>
+              </section>
             </div>
           ) : (
             // ================= 2. LOGGED IN ACCOUNT DASHBOARD (FULL CRUD) =================

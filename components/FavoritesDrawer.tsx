@@ -61,7 +61,7 @@ export function FavoritesDrawer({
                       src={product.images[0]}
                       alt={product.name}
                       onError={(e) => {
-                        ;(e.target as HTMLImageElement).src = '/hero-bike.png'
+                        ;(e.target as HTMLImageElement).src = '/hero-bike.webp'
                       }}
                     />
                   </div>

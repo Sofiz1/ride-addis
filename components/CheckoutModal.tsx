@@ -329,7 +329,7 @@ export function CheckoutModal({
                         checked={paymentMethod === 'bank_transfer'}
                         onChange={() => setPaymentMethod('bank_transfer')}
                       />
-                      <img src="/cbe-logo.png" alt="Commercial Bank of Ethiopia" className="checkout-pay-icon cbe-gold-icon" />
+                      <img src="/cbe-logo.webp" alt="Commercial Bank of Ethiopia" className="checkout-pay-icon cbe-gold-icon" />
                       <div>
                         <strong>CBE Account (ንግድ ባንክ)</strong>
                         <small>Direct Bank Account</small>

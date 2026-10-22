@@ -608,11 +608,11 @@ export function OrderTrackerModal({
                   <div key={idx} className="flex items-center justify-between text-xs bg-neutral-50 p-2.5 rounded-xl border border-neutral-200">
                     <div className="flex items-center gap-2.5">
                       <img
-                        src={it.image || '/hero-bike.png'}
+                        src={it.image || '/hero-bike.webp'}
                         alt={it.name}
                         className="w-9 h-9 object-contain bg-white rounded-lg p-1 border border-neutral-200"
                         onError={(e) => {
-                          ;(e.target as HTMLImageElement).src = '/hero-bike.png'
+                          ;(e.target as HTMLImageElement).src = '/hero-bike.webp'
                         }}
                       />
                       <div>

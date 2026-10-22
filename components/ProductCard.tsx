@@ -27,7 +27,7 @@ export function ProductCard({
 }: ProductCardProps) {
   // Multiple photos state per item
   const [activePhotoIndex, setActivePhotoIndex] = useState(0)
-  const images = (product.images && product.images.length > 0) ? product.images : ['/hero-bike.png']
+  const images = (product.images && product.images.length > 0) ? product.images : ['/hero-bike.webp']
 
   const handlePrevPhoto = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -70,11 +70,11 @@ export function ProductCard({
         {/* Multi-Photo Display */}
         <div className="card-photo-wrapper">
           <img
-            src={images[activePhotoIndex] || images[0] || '/hero-bike.png'}
+            src={images[activePhotoIndex] || images[0] || '/hero-bike.webp'}
             alt={`${product.name} angle ${activePhotoIndex + 1}`}
             className="card-main-photo"
             onError={(e) => {
-              ;(e.target as HTMLImageElement).src = '/hero-bike.png'
+              ;(e.target as HTMLImageElement).src = '/hero-bike.webp'
             }}
           />
         </div>

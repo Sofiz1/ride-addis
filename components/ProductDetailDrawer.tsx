@@ -85,7 +85,7 @@ export function ProductDetailDrawer({
                 alt={product.name}
                 className="drawer-hero-photo"
                 onError={(e) => {
-                  ;(e.target as HTMLImageElement).src = '/hero-bike.png'
+                  ;(e.target as HTMLImageElement).src = '/hero-bike.webp'
                 }}
               />
               <button
@@ -110,7 +110,7 @@ export function ProductDetailDrawer({
                       src={img}
                       alt={`Thumbnail ${idx + 1}`}
                       onError={(e) => {
-                        ;(e.target as HTMLImageElement).src = '/hero-bike.png'
+                        ;(e.target as HTMLImageElement).src = '/hero-bike.webp'
                       }}
                     />
                   </button>

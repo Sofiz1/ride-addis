@@ -357,30 +357,8 @@ export function AnubiCyclingHero({
       const chars = gsap.utils.toArray<HTMLElement>('.sofonias-char')
       if (!chars || chars.length === 0) return
 
-      // 1. Entrance animation (3D random dispersion to clean alignment)
-      gsap.fromTo(
-        chars,
-        {
-          opacity: 0,
-          y: 50,
-          z: () => gsap.utils.random(-350, 350),
-          rotationX: () => gsap.utils.random(-140, 140),
-          rotationY: () => gsap.utils.random(-140, 140),
-          filter: 'blur(12px)'
-        },
-        {
-          opacity: 1,
-          y: 0,
-          z: 0,
-          rotationX: 0,
-          rotationY: 0,
-          filter: 'blur(0px)',
-          stagger: { each: 0.04, from: 'random' },
-          duration: 1.6,
-          ease: 'expo.out',
-          delay: 0.15
-        }
-      )
+      // 1. The entrance is pure CSS (see .sofonias-char in glass.css) so the
+      // hero headline is part of the first paint instead of waiting on GSAP.
 
       // 2. Individual character hover interaction (random 3D pop, rotation, and cycling luminous glow)
       chars.forEach((char) => {
@@ -473,7 +451,7 @@ export function AnubiCyclingHero({
       {/* 1. STATIC HD MOUNTAIN ROAD BACKGROUND SCENE (NO MOVEMENT, NO 3D) */}
       <div className="hero-static-bg-container" aria-hidden="true">
         <img
-          src="/hero-cyclist-bg.jpg?v=road"
+          src="/hero-cyclist-bg.webp"
           alt="Road cyclist riding along scenic mountain highway at golden hour"
           className="hero-static-hd-img"
           loading="eager"

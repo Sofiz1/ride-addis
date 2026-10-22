@@ -217,7 +217,7 @@ export function KidsSizingSection({
                 src={matchingProduct.images[0]}
                 alt={matchingProduct.name}
                 onError={(e) => {
-                  ;(e.target as HTMLImageElement).src = '/hero-bike.png'
+                  ;(e.target as HTMLImageElement).src = '/hero-bike.webp'
                 }}
               />
               <span className="fit-verified-pill">

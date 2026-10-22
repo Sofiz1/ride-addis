@@ -1,1 +1,68 @@
-[]
+[
+  {
+    "id": "RA-64553",
+    "date": "Oct 22, 2026",
+    "items": [
+      {
+        "productId": "bike-05",
+        "name": "Menelik Hybrid Urban (Small)",
+        "price": 94500,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=900&q=80"
+      }
+    ],
+    "total": 94500,
+    "shippingAddress": {
+      "id": "addr_1792699838346",
+      "label": "Delivery Location",
+      "recipient": "admin@rideaddis.et",
+      "phone": "+251911418196",
+      "subcity": "Bole, Addis Ababa",
+      "street": "Addis Ababa Street",
+      "landmark": "Near Roundabout",
+      "isDefault": true
+    },
+    "paymentMethod": "cash_on_delivery",
+    "paymentStatus": "paid",
+    "transactionRef": "",
+    "status": "delivered",
+    "statusStep": 3,
+    "eta": "Delivered and Handed Over",
+    "courierName": "Addis Courier Fleet #4",
+    "courierPhone": "+251 91 198 7654",
+    "declineReason": null
+  },
+  {
+    "id": "RA-23563",
+    "date": "Oct 22, 2026",
+    "items": [
+      {
+        "productId": "bike-02",
+        "name": "Entoto Trail S Carbon (Small)",
+        "price": 124000,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&w=900&q=80"
+      }
+    ],
+    "total": 124000,
+    "shippingAddress": {
+      "id": "addr_1792699805514",
+      "label": "Delivery Location",
+      "recipient": "admin@rideaddis.et",
+      "phone": "+251911418196",
+      "subcity": "Bole, Addis Ababa",
+      "street": "Addis Ababa Street",
+      "landmark": "Near Roundabout",
+      "isDefault": true
+    },
+    "paymentMethod": "cash_on_delivery",
+    "paymentStatus": "declined",
+    "transactionRef": "",
+    "status": "declined",
+    "statusStep": 1,
+    "eta": "Today within 3-4 hours (Addis Ababa Express)",
+    "courierName": "Addis Courier Fleet #4",
+    "courierPhone": "+251 91 198 7654",
+    "declineReason": "Transaction reference not found in Telebirr statement"
+  }
+]
