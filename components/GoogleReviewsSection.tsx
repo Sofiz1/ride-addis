@@ -516,40 +516,45 @@ export function GoogleReviewsSection({ isAm = false }: GoogleReviewsSectionProps
       {/* Cloud Edge Transitioning Seamlessly into FAQ Section (#eae7de) */}
       <CloudDivider fill="#eae7de" position="bottom" flipX />
 
-      {/* Review Write Modal: Perfectly Responsive Bottom Sheet on Phones / Centered Dialog on Desktop */}
+      {/* Review Write Modal: Compact, perfectly proportioned, and high z-index (z-[300]) so it is never covered by site top bar on PC */}
       {isWriteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md overflow-hidden">
-          <div className="bg-[#171c18] border border-stone-700/80 rounded-t-[28px] sm:rounded-3xl max-w-lg w-full max-h-[92dvh] overflow-y-auto p-5 sm:p-7 shadow-2xl relative flex flex-col">
+        <div
+          className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsWriteModalOpen(false)
+          }}
+        >
+          <div className="bg-[#171c18] border border-stone-700/90 rounded-t-[24px] sm:rounded-2xl max-w-md w-full max-h-[88vh] overflow-y-auto p-4 sm:p-5 shadow-2xl relative flex flex-col my-auto">
             
             {/* Mobile Drag Indicator */}
-            <div className="w-12 h-1 bg-stone-600 rounded-full mx-auto mb-3 sm:hidden flex-shrink-0" />
+            <div className="w-10 h-1 bg-stone-600 rounded-full mx-auto mb-2 sm:hidden flex-shrink-0" />
 
             {/* Modal Close Button */}
             <button
               type="button"
               onClick={() => setIsWriteModalOpen(false)}
-              className="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white flex items-center justify-center transition cursor-pointer"
+              className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white flex items-center justify-center transition cursor-pointer"
               aria-label="Close review modal"
             >
-              <X size={18} />
+              <X size={16} />
             </button>
 
-            <h3 className="text-xl font-bold text-white mb-1.5 pr-8">
+            <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 pr-8">
               {isAm ? 'የጎግል አስተያየት ይጻፉ' : 'Write a Google Review'}
             </h3>
-            <p className="text-emerald-100/70 text-xs mb-5">
+            <p className="text-emerald-100/70 text-[11px] sm:text-xs mb-3">
               {isAm ? 'የብስክሌት ግልጋሎቱንና ልምድዎን ያካፍሉ' : 'Share your ride experience in Addis Ababa'}
             </p>
 
             {submittedSuccess ? (
-              <div className="py-8 text-center text-emerald-400 font-semibold flex flex-col items-center gap-2">
-                <CheckCircle2 className="w-10 h-10" />
-                <span>{isAm ? 'አስተያየትዎ በተሳካ ሁኔታ ተመዝግቧል!' : 'Thank you! Your review has been posted.'}</span>
+              <div className="py-6 text-center text-emerald-400 font-semibold flex flex-col items-center gap-2">
+                <CheckCircle2 className="w-9 h-9" />
+                <span className="text-xs sm:text-sm">{isAm ? 'አስተያየትዎ በተሳካ ሁኔታ ተመዝግቧል!' : 'Thank you! Your review has been posted.'}</span>
               </div>
             ) : (
-              <form onSubmit={handleSubmitReview} className="space-y-4">
+              <form onSubmit={handleSubmitReview} className="space-y-2.5">
                 <div>
-                  <label className="block text-xs font-semibold text-stone-300 mb-1">
+                  <label className="block text-[11px] font-semibold text-stone-300 mb-0.5">
                     {isAm ? 'ሙሉ ስም' : 'Your Name'}
                   </label>
                   <input
@@ -558,13 +563,13 @@ export function GoogleReviewsSection({ isAm = false }: GoogleReviewsSectionProps
                     value={authorName}
                     onChange={e => setAuthorName(e.target.value)}
                     placeholder="e.g. Dawit Haile"
-                    className="w-full bg-black/40 border border-stone-700 rounded-xl px-4 py-3 text-white text-base sm:text-sm focus:outline-none focus:border-amber-500"
+                    className="w-full bg-black/50 border border-stone-700/80 rounded-lg px-3 py-1.5 sm:py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500 transition"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-semibold text-stone-300 mb-1">
+                    <label className="block text-[11px] font-semibold text-stone-300 mb-0.5">
                       {isAm ? 'አድራሻ / ሰፈር' : 'Location (Subcity)'}
                     </label>
                     <input
@@ -572,11 +577,11 @@ export function GoogleReviewsSection({ isAm = false }: GoogleReviewsSectionProps
                       value={authorLocation}
                       onChange={e => setAuthorLocation(e.target.value)}
                       placeholder="e.g. Bole, Addis Ababa"
-                      className="w-full bg-black/40 border border-stone-700 rounded-xl px-4 py-3 text-white text-base sm:text-sm focus:outline-none focus:border-amber-500"
+                      className="w-full bg-black/50 border border-stone-700/80 rounded-lg px-3 py-1.5 sm:py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500 transition"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-stone-300 mb-1">
+                    <label className="block text-[11px] font-semibold text-stone-300 mb-0.5">
                       {isAm ? 'የብስክሌት ሞዴል' : 'Bicycle / Item'}
                     </label>
                     <input
@@ -584,17 +589,17 @@ export function GoogleReviewsSection({ isAm = false }: GoogleReviewsSectionProps
                       value={bikeModel}
                       onChange={e => setBikeModel(e.target.value)}
                       placeholder="e.g. Addis Commuter 01"
-                      className="w-full bg-black/40 border border-stone-700 rounded-xl px-4 py-3 text-white text-base sm:text-sm focus:outline-none focus:border-amber-500"
+                      className="w-full bg-black/50 border border-stone-700/80 rounded-lg px-3 py-1.5 sm:py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500 transition"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-xs font-semibold text-stone-300">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[11px] font-semibold text-stone-300">
                       {isAm ? 'ደረጃ (Rating)' : 'Star Rating'}
                     </label>
-                    <span className="text-xs font-bold text-amber-400 transition-all">
+                    <span className="text-[11px] font-bold text-amber-400 transition-all">
                       {(hoverRating || rating) === 5
                         ? (isAm ? '5 ኮከቦች · እጅግ በጣም ጥሩ!' : '5 Stars · Outstanding!')
                         : (hoverRating || rating) === 4
@@ -608,7 +613,7 @@ export function GoogleReviewsSection({ isAm = false }: GoogleReviewsSectionProps
                   </div>
 
                   <div
-                    className="flex items-center gap-2 p-2.5 rounded-2xl bg-black/50 border border-stone-800 w-fit"
+                    className="flex items-center gap-1.5 p-1.5 rounded-xl bg-black/50 border border-stone-800 w-fit"
                     onMouseLeave={() => setHoverRating(0)}
                   >
                     {[1, 2, 3, 4, 5].map(num => {
@@ -620,15 +625,15 @@ export function GoogleReviewsSection({ isAm = false }: GoogleReviewsSectionProps
                           onClick={() => setRating(num)}
                           onTouchStart={() => setRating(num)}
                           onMouseEnter={() => setHoverRating(num)}
-                          className={`p-2 rounded-xl border transition-all duration-150 transform hover:scale-115 active:scale-95 cursor-pointer ${
+                          className={`p-1.5 rounded-lg border transition-all duration-150 transform hover:scale-110 active:scale-95 cursor-pointer ${
                             isFilled
-                              ? 'border-amber-400/80 bg-amber-400/15 shadow-[0_0_12px_rgba(245,158,11,0.25)]'
+                              ? 'border-amber-400/80 bg-amber-400/15 shadow-[0_0_10px_rgba(245,158,11,0.25)]'
                               : 'border-stone-800 bg-stone-900/40 hover:border-stone-700'
                           }`}
                           aria-label={`Rate ${num} star${num > 1 ? 's' : ''}`}
                         >
                           <Star
-                            size={24}
+                            size={18}
                             fill={isFilled ? '#f59e0b' : 'transparent'}
                             color={isFilled ? '#f59e0b' : '#78716c'}
                             style={{
@@ -637,7 +642,7 @@ export function GoogleReviewsSection({ isAm = false }: GoogleReviewsSectionProps
                             }}
                             className={`transition-all duration-200 ${
                               isFilled
-                                ? 'filter drop-shadow-[0_0_8px_rgba(245,158,11,0.7)] scale-105'
+                                ? 'filter drop-shadow-[0_0_6px_rgba(245,158,11,0.6)] scale-105'
                                 : 'opacity-40 hover:opacity-80'
                             }`}
                           />
@@ -648,30 +653,30 @@ export function GoogleReviewsSection({ isAm = false }: GoogleReviewsSectionProps
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-stone-300 mb-1">
+                  <label className="block text-[11px] font-semibold text-stone-300 mb-0.5">
                     {isAm ? 'አስተያየት' : 'Your Review'}
                   </label>
                   <textarea
                     required
-                    rows={3}
+                    rows={2}
                     value={reviewEn}
                     onChange={e => setReviewEn(e.target.value)}
                     placeholder="Tell us about your ride, delivery in Addis Ababa..."
-                    className="w-full bg-black/40 border border-stone-700 rounded-xl px-4 py-3 text-white text-base sm:text-sm focus:outline-none focus:border-amber-500"
+                    className="w-full bg-black/50 border border-stone-700/80 rounded-lg px-3 py-1.5 sm:py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500 transition resize-none"
                   />
                 </div>
 
-                <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-3">
+                <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-1.5">
                   <button
                     type="button"
                     onClick={() => setIsWriteModalOpen(false)}
-                    className="px-5 py-2.5 text-stone-400 hover:text-white text-sm transition text-center cursor-pointer"
+                    className="px-4 py-2 text-stone-400 hover:text-white text-xs transition text-center cursor-pointer"
                   >
                     {isAm ? 'ሰርዝ' : 'Cancel'}
                   </button>
                   <button
                     type="submit"
-                    className="bg-amber-500 hover:bg-amber-400 active:scale-95 text-neutral-950 font-bold px-6 py-3 rounded-full text-sm transition shadow-lg text-center cursor-pointer"
+                    className="bg-amber-500 hover:bg-amber-400 active:scale-95 text-neutral-950 font-bold px-5 py-2 rounded-full text-xs sm:text-sm transition shadow-md text-center cursor-pointer"
                   >
                     {isAm ? 'አስገባ' : 'Publish Review'}
                   </button>

@@ -68,13 +68,18 @@ export function RideAddisAI({
       // Only apply dynamic sizing on mobile viewports (< 768px)
       if (window.innerWidth < 768) {
         const vv = window.visualViewport
-        // Calculate offset if keyboard pushes viewport
-        const offsetTop = vv.offsetTop || 0
-        const height = vv.height
-        setViewportStyle({
-          height: `${height}px`,
-          bottom: `${Math.max(0, window.innerHeight - (offsetTop + height))}px`
-        })
+        const isKeyboardOpen = window.innerHeight - vv.height > 100
+        if (isKeyboardOpen) {
+          const offsetTop = vv.offsetTop || 0
+          const height = Math.max(300, Math.round(vv.height))
+          const bottomOffset = Math.max(0, Math.round(window.innerHeight - (offsetTop + vv.height)))
+          setViewportStyle({
+            height: `${height}px`,
+            bottom: `${bottomOffset}px`
+          })
+        } else {
+          setViewportStyle({})
+        }
         scrollToBottom('auto')
       } else {
         setViewportStyle({})

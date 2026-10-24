@@ -180,16 +180,33 @@ export function ProductDetailDrawer({
                       <button
                         key={szOpt.size}
                         type="button"
-                        className={`size-pill size-pill-detailed ${isSelected ? 'active' : ''}`}
+                        className={`size-pill size-pill-detailed ${
+                          isSelected
+                            ? 'active !bg-[#171817] !text-white !border-[#d9bd6a] ring-2 ring-[#d9bd6a]/80 shadow-[0_4px_16px_rgba(0,0,0,0.3)]'
+                            : 'bg-white/90 text-neutral-900 border-neutral-300 hover:border-[#b9a15d] hover:bg-white'
+                        }`}
                         onClick={() => setSelectedSize(szOpt.size)}
+                        aria-pressed={isSelected}
                       >
-                        <span className="size-pill-name font-bold block">{szOpt.size}</span>
+                        <span className={`size-pill-name font-bold block ${isSelected ? '!text-white' : 'text-neutral-900'}`}>
+                          {szOpt.size}
+                        </span>
                         {szOpt.heightCm && (
-                          <span className="text-[10px] font-semibold text-amber-700 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 block my-1">
+                          <span
+                            className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border block my-1 ${
+                              isSelected
+                                ? 'bg-amber-400/20 !text-amber-300 border-amber-400/40'
+                                : 'text-amber-800 bg-amber-500/10 border-amber-500/20'
+                            }`}
+                          >
                             📏 {szOpt.heightCm}
                           </span>
                         )}
-                        <span className="size-pill-price text-[10px] font-mono opacity-90 block">
+                        <span
+                          className={`size-pill-price text-[10px] font-mono block ${
+                            isSelected ? '!text-[#f3e5ab] font-bold' : 'text-neutral-700 opacity-90'
+                          }`}
+                        >
                           ETB {szOpt.price.toLocaleString()}
                         </span>
                       </button>

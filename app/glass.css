@@ -1,4 +1,4 @@
-﻿/* =========================================================================
+/* =========================================================================
    RIDE ADDIS â€” GLASS DESIGN SYSTEM
    Modern boxy typography + layered glassmorphism.
    Loaded after globals.css so it layers on top of the heritage theme
@@ -930,10 +930,10 @@ h1, h2, h3, .display-type,
 }
 
 .product-drawer-pinned-footer {
-  background: rgba(250, 248, 245, 0.9);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  backdrop-filter: blur(20px) saturate(160%);
-  border-top: 1px solid rgba(23, 24, 23, 0.08);
+  background: #fdfbf7;
+  border-top: 1.5px solid rgba(23, 24, 23, 0.1);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateZ(0);
 }
 
 .drawer-main-photo-box,
@@ -947,16 +947,34 @@ h1, h2, h3, .display-type,
 }
 
 .size-pill {
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(23, 24, 23, 0.1);
-  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(23, 24, 23, 0.12);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.size-pill:hover {
+.size-pill:not(.active):hover {
   background: #ffffff;
-  border-color: rgba(185, 161, 93, 0.6);
+  border-color: rgba(185, 161, 93, 0.8);
   transform: translateY(-1px);
+}
+
+.size-pill.active,
+.size-pill.active:hover,
+.size-pill.active:focus {
+  background: #171817 !important;
+  color: #ffffff !important;
+  border-color: #d9bd6a !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 0 1.5px #d9bd6a !important;
+  transform: translateY(-1px);
+}
+
+.size-pill.active .size-pill-name {
+  color: #ffffff !important;
+}
+
+.size-pill.active .size-pill-price {
+  color: #f3e5ab !important;
 }
 
 /* ---------- 5c. Checkout + order tracker ---------- */

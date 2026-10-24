@@ -682,11 +682,34 @@ export default function AdminDashboardPage() {
     showToast(`Order #${orderId} dispatch updated!`)
   }
 
-  const executeDeleteOrder = (orderId: string) => {
-    const updated = orders.filter(o => o.id.toLowerCase() !== orderId.toLowerCase())
+  const executeDeleteOrder = async (orderId: string) => {
+    if (!window.confirm(`Are you sure you want to permanently delete order #${orderId}? This cannot be undone.`)) {
+      return
+    }
+
+    const cleanId = orderId.toLowerCase()
+    const updated = orders.filter(
+      o => o.id.toLowerCase() !== cleanId && o.id.toLowerCase().replace(/[^a-z0-9]/g, '') !== cleanId.replace(/[^a-z0-9]/g, '')
+    )
     setOrders(updated)
     saveOrdersToStorage(updated)
-    showToast(`Order #${orderId} deleted.`)
+
+    try {
+      const res = await fetch(`/api/orders?id=${encodeURIComponent(orderId)}`, {
+        method: 'DELETE'
+      })
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        console.warn('DELETE /api/orders returned error:', json.error)
+      }
+    } catch (err) {
+      console.error('Failed to sync DELETE /api/orders to server:', err)
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('storage'))
+    }
+    showToast(`Order #${orderId} deleted successfully.`)
   }
 
   // Product Actions

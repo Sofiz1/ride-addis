@@ -82,3 +82,38 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 })
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url)
+    let id = searchParams.get('id')
+
+    if (!id) {
+      try {
+        const body = await req.json()
+        id = body.id
+      } catch {
+        // Body wasn't JSON or wasn't provided
+      }
+    }
+
+    if (!id) {
+      return NextResponse.json({ success: false, error: 'Order ID is required' }, { status: 400 })
+    }
+
+    const cleanId = id.trim().toLowerCase()
+    const orders = DB.getOrders()
+    const filtered = orders.filter(
+      o => o.id.toLowerCase() !== cleanId && o.id.toLowerCase().replace(/[^a-z0-9]/g, '') !== cleanId.replace(/[^a-z0-9]/g, '')
+    )
+
+    if (filtered.length === orders.length) {
+      return NextResponse.json({ success: false, error: 'Order not found' }, { status: 404 })
+    }
+
+    DB.saveOrders(filtered)
+    return NextResponse.json({ success: true, message: `Order #${id} deleted successfully` })
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+  }
+}
